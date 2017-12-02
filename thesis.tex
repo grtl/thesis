@@ -21,6 +21,10 @@
 % Keywords
 \keywords{Kubernetes, Custom Resources, MySQL, PHP, Apache, Cluster}
 
+\usepackage[backend=biber]{biblatex}
+\addbibresource{references.bib}
+\usepackage{hyperref}
+
 \begin{document}
   \maketitle
   
@@ -31,5 +35,9 @@
   \input{src/background.tex}
   \input{src/lampstack.tex}
   \input{src/conclusions.tex}
+
+  \chapter*{Bibliography}
+  \addcontentsline{toc}{chapter}{Bibliography}  
+  \printbibliography[heading=none]
 
 \end{document}
