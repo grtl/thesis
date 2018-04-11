@@ -24,10 +24,13 @@
 \usepackage[backend=biber]{biblatex}
 \addbibresource{references.bib}
 \usepackage{hyperref}
-\usepackage{titlesec}
-\setcounter{secnumdepth}{4}
+% \usepackage{titlesec}
+\setcounter{secnumdepth}{3}
 \usepackage{graphicx}
 \usepackage{listings}
+\lstset{
+    basicstyle={\ttfamily}
+}
 
 \begin{document}
   \maketitle
@@ -42,6 +45,7 @@
   \input{src/definitions.tex}
   \input{src/background.tex}
   \input{src/development.tex}
+  \input{src/mysqloperator.tex}
   \input{src/lampstack.tex}
   \input{src/conclusions.tex}
 
