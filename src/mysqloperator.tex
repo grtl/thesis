@@ -1,7 +1,7 @@
 \chapter{MySQL Operator}
 
 In this chapter the main part of the project is described. First we provide a high-level overview,
-followed by a detailed design of the MySQL Operator and Backup Custom Resources. Next, we present
+followed by a detailed design of the \texttt{MySQL Operator} and \texttt{Backup Custom Resources}. Next, we present
 basic usage examples.
 
 \section{High-level overview}
@@ -11,7 +11,7 @@ into two essential parts:
 \begin{itemize}
 	\item The actual operator --- a running service which listens for changes on Custom Resource
 	objects and creates a new desired configuration on the Kubernetes cluster.
-	\item A command line interface --- an optional tool facilitating interaction withthe created
+	\item A command line interface --- an optional tool facilitating interaction with the created
 	resources.
 \end{itemize}
 
@@ -32,7 +32,7 @@ password) or scaling the cluster (increasing or decreasing the number of replica
 cluster). When such an update is requested, the operator makes sure all the relevant Kubernetes
 objects are updated to reflect the new cluster configuration.
 
-We provided users with the ability to schedule backups. \textbf{Scheduling a backup initiates} a
+We provided users with the ability to schedule backups. \textbf{Scheduling a backup} initiates a
 recurring backup. The backup job’s behavior is similar to a cron job’s -- backups are created
 cyclically at regular intervals.
 
@@ -47,6 +47,14 @@ the user wants to schedule database backups. Each instance of this resource corr
 schedule request for a specific cluster.
 
 \subsection{Design Patterns}
+The MySQL Operator’s implementation is primarily based on two common Kubernetes design patterns:
+the controller and operator patterns. A \textbf{controller} is an informer whose responsibility is
+to monitor changes in an application’s state. On each change, a predefined controller function is
+executed. An \textbf{operator} builds on ideas from the controller pattern and basic Kubernetes
+concepts. It is responsible for creating, configuring and managing stateful applications running on
+clusters. Operators extend the Kubernetes API and create multiple instances of applications like
+core Kubernetes resources.
+
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth, angle=0]{img/Design.pdf}
@@ -54,33 +62,25 @@ schedule request for a specific cluster.
     \label{fig:design}
 \end{figure}
 
-The MySQL Operator’s implementation is primarily based on two common Kubernetes design patterns:
-the controller and operator patterns. A \textbf{Controller} is an informer whose responsibility is
-to monitor changes in an application’s state. On each change, a predefined controller function is
-executed. An \textbf{Operator} builds on ideas from the controller pattern and basic Kubernetes
-concepts. It is responsible for creating, configuring and managing stateful applications running on
-clusters. Operators extend the Kubernetes API and create multiple instances of applications like
-core Kubernetes resources.
-
-To get a better understanding of the Controller and Operator design patterns, let’s look at an
-example of how an Operator will respond to a user’s action. Let’s say the user wants to modify a
-\textit{MySQLCluster instance}. From the user’s point of view, this can be done by issuing a
+To get a better understanding of the controller and operator design patterns, let’s look at an
+example of how an operator will respond to a user’s action. Let’s say the user wants to modify a
+\texttt{MySQLCluster} instance. From the user’s point of view, this can be done by issuing a
 \texttt{kubectl patch} command. From the operator’s point of view, an \textit{Update} event is
 received and the corresponding operator handler is called by the controller.
 
 We use the controller and operator patterns to manage resources related to both 
 \texttt{MySQL servers} and \texttt{backup jobs}. A high level overview of the project design is
-illustrated in figure \ref{fig:design}. During operator startup, two
-\texttt{CustomResourceDefinitions} (figure \ref{fig:design} (A)) are registered into the Kubernetes API.
-From this point on, users can define their own Custom Resource instances (figure \ref{fig:design} (B)) ---
-\texttt{MySQLClusters} (ex. C\#1, C\#2) and \texttt{MySQLBackups} (ex. B\#1, B\#2). Each kind of
+illustrated in Figure \ref{fig:design}. During operator startup, two
+\texttt{CustomResourceDefinitions} (figure \ref{fig:design} A) are registered into the Kubernetes API.
+From this point on, users can define their own Custom Resource instances (Figure \ref{fig:design} B) ---
+\texttt{MySQLClusters} (ex. C1, C2) and \texttt{MySQLBackups} (ex. B1, B2). Each kind of
 Custom Resource has its corresponding controller listening and reacting to changes on these
-resources. The Cluster Controller and the Backup Controller (figure \ref{fig:design} (C)), though technically
-goroutines in a single MySQL Operator process, can be thought of as separate processes responsible
-for separate parts of the cluster’s architecture. Thanks to these constructs we can monitor Custom
-Resource instances and adjust all the related objects as necessary. The operator pattern was
-designed for stateful applications, making it suitable for both database cluster and backup
-management~\cite{coreos}.
+resources. The cluster controller and the backup controller (Figure \ref{fig:design} C), though technically
+goroutines\footnote{Function or methods that run parallel with other functions or methods.} in a single
+MySQL Operator process, can be thought of as separate processes responsible for separate parts of the
+cluster’s architecture. Thanks to these constructs we can monitor custom resource instances and adjust
+all the related objects as necessary. The operator pattern was designed for stateful applications, making
+it suitable for both database cluster and backup management.~\cite{coreos}
 
 \subsection{Detailed design of the MySQL cluster}
 
@@ -101,7 +101,7 @@ A Service object represents the network configuration necessary to expose a spec
 particular domain name and port. To expose the \texttt{MySQLCluster} we create what’s called a
 “headless Service.” No specific IP address is configured. Instead, we specify which Pods (the ones
 managed by our StatefulSet) should be available under the given address. The Service then configures
-Kubernetes’s DNS to return an \textbf{A record} \footnote{An \textbf{A record} maps a domain name to
+Kubernetes’s DNS to return an \textbf{A record}\footnote{An \textbf{A record} maps a domain name to
 the IP address (IPv4) of the computer hosting the domain.} pointing at each of the Pods. This
 essentially means that DNS load balancing is used to load balance queries to the database cluster.
 
@@ -109,7 +109,7 @@ essentially means that DNS load balancing is used to load balance queries to the
 When a \texttt{MySQLCluster} instance is deleted, all the related objects should be cleared from Kubernetes
 as well. Thanks to the \texttt{ownerReferences} attribute, we do not have to worry about manual
 deletion of dependent structures. Kubernetes understands that some objects are owned by others, and
-when a parent object is deleted, the children will be deleted as well. Thus all we have to do is set
+when a parent object is deleted, the children will be deleted as well. Thus all we have to do is to set
 the \texttt{ownerReferences} field of the Services and StatefulSet we create to the parent
 \texttt{MySQLCluster} object’s UID and Kubernetes will take care of garbage collection for us.
 
@@ -118,18 +118,18 @@ Objects which are meant to have a longer lifetime, such as \textit{PersistentVol
 proceed with a hard delete, these constructs have to be removed separately.
 
 \subsubsection*{Scale/Update}
+The operator’s update handler receives information about how the cluster’s configuration looked
+like before the update, and what the new requested configuration is. Based on this, we can create
+new configurations for the cluster’s related objects (the Services and StatefulSet) and issue update
+requests for those. In case of an error, we update the \texttt{MySQLCluster’s} status field with an error
+message. The cluster might be partially updated and its previous state is not reinstated.
+
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=1\textwidth, angle=0]{img/replication.pdf}
     \caption{Replication}
     \label{fig:replication}
 \end{figure}
-
-The operator’s update handler receives information about what the cluster’s configuration looked
-like before the update, and what the new requested configuration is. Based on this, we can create
-new configurations for the cluster’s related objects (the Services and StatefulSet) and issue update
-requests for those. In case of an error, we update the \texttt{MySQLCluster’s} status field with an error
-message. The cluster might be partially updated and its previous state is not reinstated.
 
 Core Kubernetes structures, such as StatefulSets or Services, are already equipped with mechanisms
 for scaling and configuration updates that do most of the work for us (for example, starting up new
@@ -138,10 +138,11 @@ data to the newly created replicas. To achieve non-blocking replication, every p
 container running beside the main MySQL server container. \textbf{Percona XtraBackup}~\cite{percona}
 is a popular, lightweight, and easy to use program that replicates data from a database without
 stopping it. When a new Pod in a StatefulSet is created, its initial data is copied from the
-previous Pod by connecting to its XtraBackup (exposed via \texttt{ncat}) --- each new replica copies
-the data from its direct predecessor (figure \ref{fig:replication} (A)). This allows us to avoid overloading
-the master node, which would have occurred if the replica nodes all copied data from it. A new
-replica is then connected as a slave to the master MySQL server (figure \ref{fig:replication} (B)).
+previous Pod by connecting to its XtraBackup (exposed via \textbf{ncat}\footnote{Tool to read from and
+write to network connections using UDP or TCP.}) --- each new replica copies the data from its direct
+predecessor (Figure \ref{fig:replication} A). This allows us to avoid overloading the master node,
+which would have occurred if the replica nodes all copied data from it. A new replica is then connected
+as a slave to the master MySQL server (Figure \ref{fig:replication} B).
 
 \subsubsection*{Backup}
 Cyclic backups of a MySQL cluster are requested by creating a \texttt{MySQLBackup} object. Backup creation is
@@ -162,31 +163,34 @@ configuration.
 
 \section{Use Cases}
 In order for the custom resources to be properly processed and an actual MySQL cluster deployed, a
-running instance of the MySQL Operator is required inside your Kubernetes infrastructure. The
+running instance of the MySQL Operator is required inside the Kubernetes infrastructure. The
 recommended option is to start a MySQL Operator image as a Deployment in the cluster.
 
 \texttt{kubectl run mysql-operator --image=grtl/mysql-operator:latest}
 
 \subsection{Cluster}
 \subsubsection*{Create/Restore}
-\texttt{kubectl create secret generic my-password \ \newline --from-literal=password="password" \
-\newline kubectl apply -f cluster-config.yaml}
+\begin{lstlisting}
+kubectl create secret generic my-password
+--from-literal=password="password"
 
+kubectl apply -f cluster-config.yaml
+\end{lstlisting}
 
-\noindent \textbf{Data to specify}
+\paragraph{Data to specify}
 \begin{enumerate}
-	\item Cluster name\footnote{Cluster name must be unique, it will be the future reference
-	to the cluster}
-	\item Root password \textit{(Kubernetes secret)}
-	\item MySQL port \textit{(optional, defaults to 3306)}
-	\item Number of replicas \textit{(optional, default to 2)}
-	\item Storage size \textit{(optional, default to 1Gi)}
-	\item Custom \textbf{mysql} image \textit{(optional)}
-	\item Backup name \textit{(optional)}\footnote{If provided, initial cluster data is restored
+	\item Cluster name.\footnote{Cluster name must be unique, it will be the future reference
+	to the cluster.}
+	\item Root password \textit{(Kubernetes secret)}.
+	\item MySQL port \textit{(optional, defaults to 3306)}.
+	\item Number of replicas \textit{(optional, default to 2)}.
+	\item Storage size \textit{(optional, default to 1Gi)}.
+	\item Custom \textbf{mysql} image. \textit{(optional)}.
+	\item Backup name \textit{(optional)}.\footnote{If provided, initial cluster data is restored
 	from backup}
 \end{enumerate}
 
-\noindent Example \textbf{cluster-config.yaml}
+\paragraph{Example \textbf{cluster-config.yaml}}
 \begin{lstlisting}[caption=cluster-config.yaml,captionpos=b]
 apiVersion: cr.mysqloperator.grtl.github.com/v1
 kind: MySQLCluster
@@ -202,75 +206,96 @@ spec:
 	backupName: "my-backup"
 	instance: "2017-12-14-01-22"
 \end{lstlisting}
-\textbf{Example usage with CLI}
+\paragraph{Example usage with CLI}\mbox{}\\
 
 \noindent Creating new cluster with ready secret
 
-\texttt{> msp cluster create “my-cluster” ----secret “my-secret”}
+\begin{lstlisting}
+> msp cluster create "my-cluster" --secret "my-secret"
+\end{lstlisting}
 
 \noindent Creating new cluster with defining new secret
 
-\texttt{> msp cluster create “my-cluster” ----secret “my-secret” \ \newline
-----password “password”}
+\begin{lstlisting}
+> msp cluster create "my-cluster" --secret "my-secret" \
+--password "password"
+\end{lstlisting}
 
 \noindent Creating new cluster from backup instance
 
-\texttt{> msp cluster create “my-cluster” ----backup “backup-name” \ \newline
-	----instance “backup-instance”}
+\begin{lstlisting}
+> msp cluster create "my-cluster" ----backup "backup-name" \
+--instance "backup-instance"
+\end{lstlisting}
 
 \noindent Creating new cluster with specified port, image, storage, replicas and ready secret
 
-\texttt{> msp cluster create “my-cluster” ----port 1337 ----image mysql:img \ \newline
-	----replicas 7 ----secret “my-own-secret”}
+\begin{lstlisting}
+> msp cluster create "my-cluster" ----port 1337 ----image mysql:img \
+--replicas 7 --secret "my-own-secret"
+\end{lstlisting}
 
 \subsubsection*{Delete}
-\texttt{kubectl delete mysqlcluster my-cluster}
+\begin{lstlisting}
+kubectl delete mysqlcluster my-cluster
+
+\end{lstlisting}
 
 
-\noindent \textbf{Data to specify}
+\paragraph{Data to specify}
 \begin{enumerate}
-	\item Cluster name \textit{(one or more)}
-	\item Persistent Volume Claims \textit{(optional)}
+	\item Cluster name \textit{(one or more)}.
+	\item Persistent Volume Claims \textit{(optional)}.
 \end{enumerate}
 
-\noindent \textbf{Example usage with CLI}
+\paragraph{Example usage with CLI}\mbox{}\\
 
 \noindent Deleting two clusters
 
-\texttt{> cli delete cluster "my-cluster" “my-cluster2”}
+\begin{lstlisting}
+> msp delete cluster "my-cluster" "my-cluster2"
+\end{lstlisting}
 
 \noindent Deleting cluster along with PVC’s
 
-\texttt{> cli delete cluster “my-cluster” ----remove-pvc}
+\begin{lstlisting}
+> msp delete cluster "my-cluster" --remove-pvc
+\end{lstlisting}
 
 \subsubsection*{Update}
-\texttt{kubectl apply -f cluster-config.yaml}
+\begin{lstlisting}
+kubectl apply -f cluster-config.yaml
+\end{lstlisting}
 
-\noindent \textbf{Data to specify}
+\paragraph{Data to specify}
 \begin{enumerate}
-	\item Cluster name
-	\item Root password \textit{(Kubernetes secret, optional)}
-	\item MySQL port \textit{(optional)}
-	\item Number of replicas \textit{(optional)}
+	\item Cluster name.
+	\item Root password \textit{(Kubernetes secret, optional)}.
+	\item MySQL port \textit{(optional)}.
+	\item Number of replicas \textit{(optional)}.
 \end{enumerate}
 
-\noindent \textbf{Example usage with CLI}
+\paragraph{Example usage with CLI}\mbox{}\\
 
 \noindent Updating cluster with new secret, port and number of replicas
 
-\texttt{> cli update cluster "my-cluster" ----replicas 4 ----port 1337 \ \newline
-----secret "my-new-secret"}
+\begin{lstlisting}
+> msp update cluster "my-cluster" --replicas 4 --port 1337 \
+--secret "my-new-secret"
+\end{lstlisting}
 
 \subsection{Backup}
 \subsubsection*{Create}
-\texttt{kubectl create -f backup-config.yaml}
+\begin{lstlisting}
+kubectl create -f backup-config.yaml
+\end{lstlisting}
 
-\noindent \textbf{Data to specify}
+\paragraph{Data to specify}
 \begin{enumerate}
-	\item Backup name \textit{(optional: defaults to auto generated based on cluster name)}
-	\item Cluster name
-	\item Time \textit{(CRON style, required)}
-	\item Storage \textit{(optional: default to the Cluster storage size)}
+	\item Backup name \textit{(optional: defaults to auto generated based on cluster name)}.
+	\item Cluster name.
+	\item Time \textit{(CRON style, required)}.
+	\item Storage \textit{(optional: default to the Cluster storage size)}.
 \end{enumerate}
 
 \noindent  \textbf{Additional info}
@@ -278,7 +303,7 @@ spec:
 \noindent Database will be backed up in an automatically claimed Persistent Volume with the size
 calculated based on the cluster current database size.
 
-\noindent \textbf{Example \textbf{backup-config.yaml}}
+\paragraph{Example \textbf{backup-config.yaml}}
 \begin{lstlisting}[caption=backup-config.yaml,captionpos=b]
 apiVersion: cr.mysqlbackup.grtl.github.com/v1
 kind: MySQLBackup
@@ -290,47 +315,61 @@ spec:
   storage: 1Gi
 \end{lstlisting}
 
-\noindent \textbf{Example usage with CLI}
+\paragraph{Example usage with CLI}\mbox{}\\
 
-\noindent Creating backup at 23:59 December 31 every year for “my-cluster”
+\noindent Creating backup at 23:59 December 31 every year for "my-cluster"
 
-\texttt{>cli create backup ----cluster "my-cluster" \ \newline
---time “59 23 31 DEC Fri *”}
+\begin{lstlisting}
+> msp create backup --cluster "my-cluster" \
+--time "59 23 31 DEC Fri *"
+\end{lstlisting}
 
 \noindent Creating “elite” backup  at 13:37 every day for cluster “my-cluster” and storage 2Gi
 
-\texttt{> cli create backup ----name “elite” ----cluster “my-cluster” \newline
- ----time “13 37  *  *  * *” ----storage 2Gi}
+\begin{lstlisting}
+> msp create backup --name "elite" --cluster "my-cluster" \
+ --time "13 37  *  *  * *" --storage 2Gi}
+ \end{lstlisting}
 
 \subsubsection*{Delete}
-\texttt{kubectl delete mysqlcluster my-cluster}
+\begin{lstlisting}
+kubectl delete mysqlcluster my-cluster
+\end{lstlisting}
 
-\noindent \textbf{Data to specify}
+\paragraph{Data to specify}
 \begin{enumerate}
-	\item Cluster name \textit{(one or more)}
-	\item Persistent Volume Claims \textit{(optional)}
+	\item Cluster name \textit{(one or more)}.
+	\item Persistent Volume Claims \textit{(optional)}.
 \end{enumerate}
 
-\noindent \textbf{Example usage with CLI}
+\paragraph{Example usage with CLI}\mbox{}\\
 
 \noindent Deleting two backups
 
-\texttt{> cli delete backup "my-backup" “my-backup2"}
+\begin{lstlisting}
+> msp delete backup "my-backup" "my-backup2"
+\end{lstlisting}
 
 \noindent Deleting cluster along with PVC’s
 
-\texttt{> cli delete backup “my-backup” ----remove-pvc}
+\begin{lstlisting}
+> msp delete backup "my-backup" --remove-pvc
+\end{lstlisting}
 
 \subsubsection*{Update}
-\texttt{Kubectl apply -f backup-config.yaml}
+\begin{lstlisting}
+kubectl apply -f backup-config.yaml
+\end{lstlisting}
 
-\noindent \textbf{Data to specify}
+\paragraph{Data to specify}
 \begin{enumerate}
-	\item Time \textit{CRON style}
+	\item Time \textit{CRON style}.
 \end{enumerate}
 
-\noindent \textbf{Example usage with CLI}
+\paragraph{Example usage with CLI}\mbox{}\\
 
 \noindent Updating time field for my-backup
 
-\texttt{> cli update backup “my-backup” ----time "12 20 * * * *"}
+\begin{lstlisting}
+> msp update backup "my-backup" --time "12 20 * * * *"
+\end{lstlisting}
