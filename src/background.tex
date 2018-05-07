@@ -1,97 +1,80 @@
 \chapter{Background}
 
-\section{Kubernetes}
-\textbf{Kubernetes}~\cite{kubernetes} (k8s) is an open-source system for
-automating deployment, scaling, and management of containerized applications.
+In this chapter, we provide a basic understanding of the fundamentals necessary to understand
+further parts of this dissertation. First, the Kubernetes’ basic concepts and philosophy are
+explained. Next, we describe Kubernetes’ structure, including the container orchestration process.
+Finally, we provide information about an important concept used in the project --- Custom Resource
+Definitions.
 
-\section{Technologies}
-Kubernetes is written in Go~\cite{golang} (also called golang)~\cite{golang-info}
---- an open source compiled, statically typed imperative language created by
-Google engineers Rob Pike, Robert Griesemer and Ken Thompson in 2012. It was
-meant for concurrent computing and distributed systems programming. Golang is
-broadly used in cloud-based projects, such as Google Cloud, AWS,
-Microsoft Azure, Digital Ocean, or Heroku.
+\section{Kubernetes Basics}
+On an abstract level, a user interacts with Kubernetes by describing a desired cluster state, which
+Kubernetes then tries to enact. The actual state may be dynamically and constantly changing, for
+example due to machine failures or scheduling decisions on Kubernetes' part. What is more, most
+Kubernetes objects represent stateless constructs. When deploying a stateful application, such as a
+MySQL database cluster, we need to use structures designed specifically for such stateful cases. In
+the latest versions of Kubernetes, we are provided with some useful stateful objects, such as
+PersistentVolumes or StatefulSets. It’s useful to make a note about Kubernetes’ design philosophy.
+Kubernetes objects are meant to be just that --- objects. They are to represent nouns rather than
+verbs. As such, we usually don’t create objects that are responsible for a single action. Instead,
+for example, one may create an object that represents an agent that performs the desired action
+periodically.
 
+\section{Kubernetes Architecture}
 
-\section{Structure}
-\subsection{Cluster}
-A cluster is a single logical unit consisting of a group of computers working
-together. A  single machine with its own operating system linked to other
-components within a cluster is called a \emph{node}. Kubernetes clusters provide
-us with an efficient way of deploying applications with automated distribution
-across a cluster using containerization. Nodes within a cluster have different
-roles. The primary distinction is that of \emph{master} and \emph{worker} nodes.
-There is one master node, responsible for orchestrating the cluster and keeping
-track of state necessary to accomplish this goal. Business logic is performed
-by the worker nodes, created dynamically to fulfill the requests from users.
+Kubernetes is a container orchestration tool. Its job is managing containers running on Pods. Pods
+are the atomic units of computing used in Kubernetes --- they are an abstraction for a set of
+containers with shared resources. The real working machines, to which pods are tied to by the
+scheduler, are referred to as nodes. These work in bigger groups, so-called clusters, which
+create single logical units in Kubernetes. There is one master node, responsible for orchestrating
+the cluster and keeping track of state necessary to accomplish this goal. Business logic is
+performed by worker nodes --- work is allocated to them dynamically to fulfill requests from users.
+In the event of a node failing, the Pod will be recreated on a new, working node. This provides a
+continuous work of cluster applications.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.4\textwidth, angle=0]{img/kubernetes_cluster.pdf}
+    \includegraphics[width=1\textwidth, angle=0]{img/architecture.png}
+    \caption{Kubernetes architecture~\cite{arch}}
+    \label{fig:arch}
 \end{figure}
 
-\subsection{Master}
-The master node~\cite{master-node} is responsible for processing events in the
-cluster and making global decision, such as scheduling and scaling. The master
-usually runs on a computer separate from the ones dedicated to hosting worker
-jobs. It consists of several components that allow for communication between
-other nodes and cluster users. It also manages resources for the worker nodes.
+To get a better understanding of Kubernetes structure, let’s avail ourselves of the data presented
+in the Figure \ref{fig:arch}. Each worker node is equipped with a \textit{kubelet} program
+responsible for managing Pods on that particular node, and for communication with the master. The
+kube-apiserver runs on every node in order to provide TCP and UDP forwarding across the backend.
 
-\subsection{Kube-apiserver}
-One of the most important features of the master node is a server running on it,
-exposing a RESTful API. The API may be queried by users and applications to get
-information about the cluster’s current state, and requests can be made to
-request the addition, deletion, or modification of various API objects. As
-requests are made, a \emph{desired} state is defined. It is the job of other
-processes running on the master node to make the \emph{actual} state match this
-desired state.
-
-\subsection{Etcd}
-Etcd is a daemon providing a dynamic key-value configuration registry. The
-master node uses etcd to store information about the cluster’s state. Requests
-to the kubernetes apiserver result in queries and modifications of the data
-stored in etcd.
-
-\subsection{Kube-controller-manager}
-Another vital part of the master node is a group of controllers that manage
-cluster work. These are the processes responsible for making the actual state
-match the desired state, as stored in etcd.
-
-\subsection{Pod}
-A pod is an abstraction for one or more containers with shared resources like
-volumes or network. Each pod within a cluster has a lifecycle. From creation,
-a pod is tied to a specific node by the scheduler and runs there until
-termination. In the event of a node failing, the pod will be recreated on a new,
-working node. It is an “atomic” unit in the Kubernetes cluster.
-
-Kubelet is a program running on every node. It is responsible for managing pods
-and communication with the master.
-
-\subsection{Kubectl}
-Kubectl is a command-line interface used for accessing core kubernetes
-functionalities and interacting with a cluster.
+The master node is responsible for processing events in the cluster and making global decisions,
+such as scheduling and scaling. It consists of several components that allow for communication
+between other nodes and cluster users, such as kube-apiserver, etcd and kube-controller-manager.
+One of the most important features of the master node is a server running on it, exposing a RESTful
+API. The API may be queried by users and applications to get information about the cluster’s current
+state, and requests can be made to request the addition, deletion, or modification of various API
+objects. As requests are made, a desired state is defined. It is the job of a group of controllers
+within kube-controller-manager to make the actual state match this desired state. The master node
+uses etcd to store information about the cluster’s state. Requests to the Kubernetes apiserver
+result in queries and modifications of the data stored in etcd.
 
 \section{Expanding the Kubernetes API}
-Kubernetes was designed to be easily extensible and
-configurable~\cite{extending-kubeapi}. There are many ways of customizing the
-API and adding new functionalities, so called Custom Resources. The idea behind
-Custom Resources is to allow the user to define new API objects that can be
-handled in the same way as resources already understood by Kubernetes. As
-a result, they provide a way of customizing a specific Kubernetes installation,
-exposing new behavior that can be accessed via the same kubectl operations as
-default resources.
+Kubernetes was designed to be easily extensible and configurable~\cite{extending-kubeapi}. There are
+many ways of customizing the API and adding new functionalities, so called Custom Resources.
 
-\subsection{Aggregation Layer}
-The basic way of expanding the k8s API, introduced in kubernetes 1.7, is using
-the aggregation layer. Thanks to this tool, one can perform API aggregation at
-runtime. The aggregation layer enables the creation of custom resources by
-deploying its own API server.
+The idea behind Custom Resources is to allow the user to define new API objects that can be handled
+in the same way as resources already understood by Kubernetes. As a result, they provide a way of
+customizing a specific Kubernetes installation, exposing new behavior that can be accessed via the
+same kubectl operations as default resources. There are two ways of defining Custom Resources: using
+the aggregation layer or Custom Resource Definitions.
 
-\subsection{Custom Resource Definitions}
-Custom Resource Definitions (CRDs) are another way of defining custom resources.
-A user can create a Custom Resource Definition object in the API, specifying
-a name and schema for the type of custom resource they wish to introduce.
-Custom Resource Definitions are static objects in the API. Once a CRD exists,
-Custom Resource objects of the defined type can be created by users. This way
-of creating Custom Resources provides developers with less flexibility than
-aggregation layers but requires less overhead for simple applications.
+The first way of expanding the Kubernetes API, introduced in Kubernetes 1.7, is using the
+aggregation layer. Thanks to this tool, one can perform API aggregation at runtime. The aggregation
+layer enables the creation of custom resources by deploying its own API server.
+\textbf{Custom Resource Definitions} (CRDs) are static objects in the API. A user can create a
+Custom Resource Definition object in the API, specifying a name and schema for the type of custom
+resource they wish to introduce. Once a CRD exists, Custom Resource objects of the defined type can
+be created by users. This way of creating Custom Resources provides developers with less flexibility
+than aggregation layers but requires less overhead for simple applications.
+
+The MySQL operator is implemented using Custom Resource Definitions because of the simplicity and
+modern design of this option. This way of extending Kubernetes API is a new concept (beta version in
+Kubernetes 1.9), as a result it will be supported and elaborated in future development. Though
+Custom Resource Definitions’ functionalities are limited compared to the aggregation layer’s, they
+are suitable for our project’s needs.
