@@ -1,0 +1,110 @@
+\chapter{Command Line Tool}
+In this chapter we describe \texttt{msp} --- a command line tool we created to facilitate usage of the MySQL Operator. First, we explain the basic CLI concept, followed by a description of technologies used, and finally a detailed description of the functionalities provided by our tool. We also provide a few usage examples to outline the most common use cases.
+
+\section{CLI Basic}
+\texttt{msp} provides a layer of abstraction over management of MySQLCluster and MySQLBackup objects. Rather than writing verbose yaml files and manually modifying Kubernetes’ configuration via \texttt{kubectl}, a user can easily perform most actions related to managing their MySQL cluster with a single `msp` command. Additionally, a CLI tool like this helps inexperienced users get started with our system, and allows Kubernetes system administrators to write more concise and expressive automation scripts.
+
+\section{Technologies}
+Like the rest of our project, \texttt{msp} is written in Go. Our implementation bases on Cobra~\cite{cobra} --- a framework for writing command line interfaces similar to many UNIX shell programs. Cobra is widely used in the Go and Kubernetes ecosystems, most prominently in \texttt{kubectl} itself. The library is designed to facilitate the creation of easily extensible and customizable CLI tools.
+Cobra programs are typically called with a list of structured arguments specifying an object, an action to perform on the selected object, and optionally a list of flags that customize the program’s behavior. 
+
+\section{Functionalities}
+The treelike command structure implies the natural order of the whole CLI tool. Consequently, each command in our tool has the following form: \\ 
+\centerline{\textit{msp resource-type action resource-name flags}}
+\texttt{msp} can be used to create, update, or delete both resource types. Flags can be global or local, referring to resource types and actions. \texttt{msp} to set global options, needed for proper functioning of cli,  use following flags:
+\begin{itemize}
+	\item Kubeconfig --- location of kubeconfig file needed to establish a network connection with Kubernetes cluster
+	\item Namespace --- Kubernetes namespace in which resources will be created
+	\item Force --- to ignore errors during cascade deleting
+\end{itemize}
+
+
+\section{MySQL Operator Use-cases}
+These use cases show most of the actions that can be performed to manage a cluster and its data.
+\subsection{Cluster}
+
+\subsubsection*{Create}
+\noindent Creating a new cluster with an already exisiting Secret.
+
+\begin{lstlisting}
+> msp cluster create "my-cluster" --secret "my-secret"
+\end{lstlisting}
+
+\noindent Creating a new cluster along with defining new Secret.
+
+\begin{lstlisting}
+> msp cluster create "my-cluster" --secret "my-secret" \
+	--password "password"
+\end{lstlisting}
+
+\noindent Creating a new cluster from a backup instance.
+
+\begin{lstlisting}
+> msp cluster create "my-cluster" --backup "backup-name" \
+	--instance "backup-instance"
+\end{lstlisting}
+
+\noindent Creating a new cluster with specified port, image, storage and number of replicas.
+
+\begin{lstlisting}
+> msp cluster create "my-cluster" --port 1337 --image mysql:img \
+	--replicas 7 --secret "my-own-secret"
+\end{lstlisting}
+
+\subsubsection*{Delete}
+\noindent Deleting two clusters
+
+\begin{lstlisting}
+> msp delete cluster "my-cluster" "my-cluster2"
+\end{lstlisting}
+
+\noindent Deleting cluster along with PVC’s
+
+\begin{lstlisting}
+> msp delete cluster "my-cluster" --remove-pvc
+\end{lstlisting}
+
+\subsubsection*{Update}
+\noindent Updating cluster with new secret, port and number of replicas
+
+\begin{lstlisting}
+> msp update cluster "my-cluster" --replicas 4 --port 1337 \
+	--secret "my-new-secret"
+\end{lstlisting}
+
+\subsection{Backup}
+
+\subsubsection*{Create}
+\noindent Creating a backup schedule that creates a backup instance at 23:59 December 31 every year
+
+\begin{lstlisting}
+> msp create backup --cluster "my-cluster" \
+	--time "59 23 31 DEC Fri *"
+\end{lstlisting}
+
+\noindent Creating a backup schedule named "elite" in Kubernetes that creates a backup instance at 13:37 every day with 2Gi of storage
+
+\begin{lstlisting}
+> msp create backup --name "elite" --cluster "my-cluster" \
+	--time "13 37  *  *  * *" --storage 2Gi
+\end{lstlisting}
+
+\subsubsection*{Delete}
+\noindent Deleting two backup schedules
+
+\begin{lstlisting}
+> msp delete backup "my-backup" "my-backup2"
+\end{lstlisting}
+
+\noindent Deleting backup schedule along with PVC's
+
+\begin{lstlisting}
+> msp delete backup "my-backup" --remove-pvc
+\end{lstlisting}
+
+\subsubsection*{Update}
+\noindent Updating a backup schedule's time field
+
+\begin{lstlisting}
+> msp update backup "my-backup" --time "12 20 * * * *"
+\end{lstlisting}

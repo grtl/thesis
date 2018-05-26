@@ -1,0 +1,43 @@
+\chapter{Project decisions}
+In this chapter we describe non trivial decisions made while designing the project, as well as the
+reasons behind them.
+
+\section{Backup}
+Even though it is certain that we want to use Custom Resource Definitions, the question on how to
+use them still remains. The main object in the project is MySQL Cluster, which can be added,
+deleted, updated, scaled freely as a CRD instance. The remaining question is about backups.
+
+We decided to use the operator pattern again for managing backups. In the case of the MySQL
+operator it was fairly obvious what needed to be done to implement a cluster --- create a
+StatefulSet to run servers, and a Service to expose them at one DNS endpoint. Designing a system
+for backups required a bit more thought.
+
+\section{Cyclic Backups}
+The Kubernetes’ design philosophy proclaims that users should describe the desired state and
+Kubernetes will try to adjust to this request. As mentioned in the Background, Kubernetes objects
+are by convention meant to represent nouns, not verbs. Following this ideology, we decided to
+implement a cyclic backup creation. What is more, creating backups on a cyclic schedule is a
+good system administration practice. However, for the users’ convenience, single backups are also
+supported.
+
+\section{Backup Schedules and Instances}
+In order to implement cyclic backups, there must exist objects responsible for managing each one of
+these repetitive actions. At the same time, we have to keep track of existing backups. Taking this
+into account, we provide users with the MySQLBackupSchedule custom resource, whose meaning is not a
+verb ("create a backup"), but a noun ("an agent that creates backups periodically"). At the same
+time, another resource --- MySQLBackupInstance is created to allow us for monitoring existing
+backups. In order to implement cyclic backups, there must exist objects responsible for managing
+each one of these repetitive actions. At the same time, we have to keep track of existing backups.
+Taking this into account, we provide users with the MySQLBackupSchedule custom resource, whose
+meaning is not a verb ("create a backup"), but a noun ("an agent that creates backups periodically").
+At the same time, another resource --- MySQLBackupInstance is created to allow us for monitoring
+existing backups.
+
+\section{LAMP Stack}
+LAMP stands for Linux, Apache, MySQL, and PHP, and refers to a stack of technologies commonly used
+for hosting web services. Our project’s purpose was to provide a convenient way to set up a LAMP
+stack on Kubernetes. We quickly realized that the only part of this stack that needed special
+consideration was the database layer. An Apache server serving a simple PHP web application can
+easily be deployed using a Kubernetes Deployment and a publicly available Apache Docker image.
+Kubernetes Deployment objects were designed specifically for these kinds of stateless applications.
+As such, we decided to focus our efforts on implementing the MySQL operator.
