@@ -58,9 +58,9 @@ necessity to maintain the Jenkins server ourselves at the expense of the time we
 on the project we’ve decided to move the continuous integration to a hosted service.
 
 With Travis-CI we were able to set up the whole environment we’ve had on Jenkins along with the
-integration tests setup we were previously lacking. The setup of Kubernetes cluster without the direct
-access to the machines our CI didn’t succeed and at the end we had to ask Travis-CI administrators
-for such privileges. We were able to identify the issue of our application when built on Ubuntu Linux
-(16.04 used by Travis-CI) would link to the standard libraries, not present on the Alpine Linux
-(used as a Docker image base). 
+integration tests setup we were previously lacking. The setup of Kubernetes cluster without having 
+the direct access to the machines of our CI didn’t succeed. In the end we had to ask Travis-CI 
+administrators for such privileges. We were able to identify the issue of our application when 
+built on Ubuntu Linux (16.04 used by Travis-CI) would link to the standard libraries, not present 
+on the Alpine Linux (used as a Docker image base). 
 

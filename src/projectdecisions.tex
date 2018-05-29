@@ -14,11 +14,11 @@ for backups required a bit more thought.
 
 \section{Cyclic Backups}
 The Kubernetes’ design philosophy proclaims that users should describe the desired state and
-Kubernetes will try to adjust to this request. As mentioned in the Background, Kubernetes objects
-are by convention meant to represent nouns, not verbs. Following this ideology, we decided to
-implement a cyclic backup creation. What is more, creating backups on a cyclic schedule is a
-good system administration practice. However, for the users’ convenience, single backups are also
-supported.
+Kubernetes will try to adjust to this request. As mentioned in the Background chapter, Kubernetes 
+objects are by convention meant to represent nouns, not verbs. Following this ideology, we 
+decided to implement a cyclic backup creation. What is more, creating backups on a cyclic schedule 
+is a good system administration practice. However, for the users’ convenience, single backups are 
+also supported.
 
 \section{Backup Schedules and Instances}
 In order to implement cyclic backups, there must exist objects responsible for managing each one of
@@ -26,12 +26,7 @@ these repetitive actions. At the same time, we have to keep track of existing ba
 into account, we provide users with the MySQLBackupSchedule custom resource, whose meaning is not a
 verb ("create a backup"), but a noun ("an agent that creates backups periodically"). At the same
 time, another resource --- MySQLBackupInstance is created to allow us for monitoring existing
-backups. In order to implement cyclic backups, there must exist objects responsible for managing
-each one of these repetitive actions. At the same time, we have to keep track of existing backups.
-Taking this into account, we provide users with the MySQLBackupSchedule custom resource, whose
-meaning is not a verb ("create a backup"), but a noun ("an agent that creates backups periodically").
-At the same time, another resource --- MySQLBackupInstance is created to allow us for monitoring
-existing backups.
+backups. 
 
 \section{LAMP Stack}
 LAMP stands for Linux, Apache, MySQL, and PHP, and refers to a stack of technologies commonly used

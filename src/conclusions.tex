@@ -18,7 +18,7 @@ work on the project.
 
 The final and biggest potential development is providing direct support for Apache/PHP applications.
 For example, a \texttt{LAMPApplication} custom resource could be provided. The operator for these objects
-that would manage a replicated Apache deployment of a PHP app, along with a MySQL server cluster.
+would manage a replicated Apache deployment of a PHP app, along with a MySQL server cluster.
 This could be handled in several ways --- either creating a MySQLCluster object and using the
 operator for MySQL servers we already developed, or requiring the \texttt{LAMPApplication} spec to contain
 the name of a service exposing a MySQL server. The latter solution would give more flexibility to

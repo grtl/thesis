@@ -7,7 +7,7 @@ Finally, we provide information about an important concept used in the project -
 Definitions.
 
 \section{Kubernetes Basics}
-On an abstract level, a user interacts with Kubernetes by describing a desired cluster state, which
+On an abstract level, a user interacts with Kubernetes by describing a desired state, which
 Kubernetes then tries to enact. The actual state may be dynamically and constantly changing, for
 example due to machine failures or scheduling decisions on Kubernetes' part. What is more, most
 Kubernetes objects represent stateless constructs. When deploying a stateful application, such as a
@@ -77,4 +77,4 @@ The MySQL operator is implemented using Custom Resource Definitions because of t
 modern design of this option. This way of extending Kubernetes API is a new concept (beta version in
 Kubernetes 1.9), as a result it will be supported and elaborated in future development. Though
 Custom Resource Definitions’ functionalities are limited compared to the aggregation layer’s, they
-are suitable for our project’s needs.
+are suitable for the project’s needs.

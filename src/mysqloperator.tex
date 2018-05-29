@@ -1,8 +1,8 @@
 \chapter{MySQL Operator}
 
-In this chapter the main part of the project is described. First we provide a high-level overview,
-followed by a detailed design of the \texttt{MySQL Operator} and \texttt{Backup Custom Resources}. Next, we present
-basic usage examples.
+In this chapter the main part of the project is described. First we provide 
+a high-level overview, followed by a detailed design of the \texttt{MySQL Operator} 
+and \texttt{Backup Custom Resources}. Next, we present basic usage examples.
 
 \section{High-level overview}
 MySQL Operator allows a user to easily deploy replicated MySQL databases on a Kubernetes cluster.
@@ -14,6 +14,8 @@ into two essential parts:
 	\item A command line interface --- an optional tool facilitating interaction with the created
 	resources.
 \end{itemize}
+
+In this chapter we will focus on the first one of mentioned elements.
 
 \subsection{Functionalities}
 The MySQL Operator allows the user to create, delete, update, backup and restore MySQL clusters.
@@ -73,7 +75,7 @@ We use the controller and operator patterns to manage resources related to both
 illustrated in Figure \ref{fig:design}. During operator startup, two
 \texttt{CustomResourceDefinitions} (figure \ref{fig:design} A) are registered into the Kubernetes API.
 From this point on, users can define their own Custom Resource instances (Figure \ref{fig:design} B) ---
-\texttt{MySQLClusters} (ex. C1, C2) and \texttt{MySQLBackups} (ex. B1, B2). Each kind of
+\texttt{MySQLClusters} (ex. C1, C2) and \texttt{MySQLBackupSchedules} (ex. B1, B2). Each kind of
 Custom Resource has its corresponding controller listening and reacting to changes on these
 resources. The cluster controller and the backup controller (Figure \ref{fig:design} C), though technically
 goroutines\footnote{Function or methods that run parallel with other functions or methods.} in a single
@@ -144,6 +146,10 @@ predecessor (Figure \ref{fig:replication} A). This allows us to avoid overloadin
 which would have occurred if the replica nodes all copied data from it. A new replica is then connected
 as a slave to the master MySQL server (Figure \ref{fig:replication} B).
 
+\section{Detailed design of the MySQL backups}
+
+TODO: one more figure, more details
+
 \subsubsection*{Backup}
 Cyclic backups of a MySQL cluster are requested by creating a \texttt{MySQLBackup} object. Backup creation is
 handled by a Kubernetes CronJob object created by our operator. A CronJob periodically creates
@@ -164,17 +170,21 @@ configuration.
 \section{Use Cases}
 In order for the custom resources to be properly processed and an actual MySQL cluster deployed, a
 running instance of the MySQL Operator is required inside the Kubernetes infrastructure. The
-recommended option is to start a MySQL Operator image as a Deployment in the cluster.
+recommended option is to start a MySQL Operator image as a Deployment in the cluster:
 
 \texttt{kubectl run mysql-operator --image=grtl/mysql-operator:latest}
 
 \subsection{Cluster}
 \subsubsection*{Create/Restore}
-\begin{lstlisting}
-kubectl create secret generic my-password
---from-literal=password="password"
 
-kubectl apply -f cluster-config.yaml
+The \texttt{MySQLCluster} creation is the most essential part of the 
+workflow. At this point user has to decide on cluster configuration.
+
+\begin{lstlisting}
+> kubectl create secret generic my-password \
+	--from-literal=password="password"
+
+> kubectl apply -f cluster-config.yaml
 \end{lstlisting}
 
 \paragraph{Data to specify}
@@ -206,41 +216,17 @@ spec:
 	backupName: "my-backup"
 	instance: "2017-12-14-01-22"
 \end{lstlisting}
-\paragraph{Example usage with CLI}\mbox{}\\
-
-\noindent Creating new cluster with ready secret
-
-\begin{lstlisting}
-> msp cluster create "my-cluster" --secret "my-secret"
-\end{lstlisting}
-
-\noindent Creating new cluster with defining new secret
-
-\begin{lstlisting}
-> msp cluster create "my-cluster" --secret "my-secret" \
---password "password"
-\end{lstlisting}
-
-\noindent Creating new cluster from backup instance
-
-\begin{lstlisting}
-> msp cluster create "my-cluster" ----backup "backup-name" \
---instance "backup-instance"
-\end{lstlisting}
-
-\noindent Creating new cluster with specified port, image, storage, replicas and ready secret
-
-\begin{lstlisting}
-> msp cluster create "my-cluster" ----port 1337 ----image mysql:img \
---replicas 7 --secret "my-own-secret"
-\end{lstlisting}
 
 \subsubsection*{Delete}
+
+It is possible to delete many clusters at the same time by simply writing
+names of all the clusters we want to remove from Kubernetes.
+
 \begin{lstlisting}
-kubectl delete mysqlcluster my-cluster
-
+> kubectl delete mysqlcluster my-cluster
+OR
+> kubectl delete mc my-cluster
 \end{lstlisting}
-
 
 \paragraph{Data to specify}
 \begin{enumerate}
@@ -248,23 +234,14 @@ kubectl delete mysqlcluster my-cluster
 	\item Persistent Volume Claims \textit{(optional)}.
 \end{enumerate}
 
-\paragraph{Example usage with CLI}\mbox{}\\
-
-\noindent Deleting two clusters
-
-\begin{lstlisting}
-> msp delete cluster "my-cluster" "my-cluster2"
-\end{lstlisting}
-
-\noindent Deleting cluster along with PVC’s
-
-\begin{lstlisting}
-> msp delete cluster "my-cluster" --remove-pvc
-\end{lstlisting}
-
 \subsubsection*{Update}
+
+Not every element of configuration can be updated. Even though we aimed 
+to provide the best configurability possible, users cannot modify the
+cluster name.
+
 \begin{lstlisting}
-kubectl apply -f cluster-config.yaml
+> kubectl apply -f cluster-config.yaml
 \end{lstlisting}
 
 \paragraph{Data to specify}
@@ -275,19 +252,14 @@ kubectl apply -f cluster-config.yaml
 	\item Number of replicas \textit{(optional)}.
 \end{enumerate}
 
-\paragraph{Example usage with CLI}\mbox{}\\
-
-\noindent Updating cluster with new secret, port and number of replicas
-
-\begin{lstlisting}
-> msp update cluster "my-cluster" --replicas 4 --port 1337 \
---secret "my-new-secret"
-\end{lstlisting}
-
 \subsection{Backup}
 \subsubsection*{Create}
+
+During the backup creation users specify how often they want their backups 
+to be created.
+
 \begin{lstlisting}
-kubectl create -f backup-config.yaml
+> kubectl create -f backup-config.yaml
 \end{lstlisting}
 
 \paragraph{Data to specify}
@@ -306,7 +278,7 @@ calculated based on the cluster current database size.
 \paragraph{Example \textbf{backup-config.yaml}}
 \begin{lstlisting}[caption=backup-config.yaml,captionpos=b]
 apiVersion: cr.mysqlbackup.grtl.github.com/v1
-kind: MySQLBackup
+kind: MySQLBackupSchedule
 metadata:
   name: "my-backup"
 spec:
@@ -315,25 +287,31 @@ spec:
   storage: 1Gi
 \end{lstlisting}
 
-\paragraph{Example usage with CLI}\mbox{}\\
+\noindent  \textbf{Getting backup instances}
 
-\noindent Creating backup at 23:59 December 31 every year for "my-cluster"
+\noindent For getting created backup instances with a valuable output we recommend
+using output flag with the following configuration:
 
 \begin{lstlisting}
-> msp create backup --cluster "my-cluster" \
---time "59 23 31 DEC Fri *"
+kubectl get mbi -o custom-columns="NAME:metadata.name,\
+	STATUS:status.phase,SCHEDULE:spec.schedule,\
+	CLUSTER:spec.cluster,CREATED:metadata.creationTimestamp"
 \end{lstlisting}
 
-\noindent Creating “elite” backup  at 13:37 every day for cluster “my-cluster” and storage 2Gi
-
+\noindent Sample output:
 \begin{lstlisting}
-> msp create backup --name "elite" --cluster "my-cluster" \
- --time "13 37  *  *  * *" --storage 2Gi}
- \end{lstlisting}
+NAME          STATUS    SCHEDULE  CLUSTER    CREATED
+bckp-instance Completed bckp      my-cluster 2018-04-27T14:42:33Z
+\end{lstlisting}
 
 \subsubsection*{Delete}
+
+Deletion of the backups works in the same way as the cluster deletion.
+
 \begin{lstlisting}
-kubectl delete mysqlcluster my-cluster
+> kubectl delete mysqlbackupschedule my-backup
+OR
+> kubectl delete mbs my-backup
 \end{lstlisting}
 
 \paragraph{Data to specify}
@@ -342,34 +320,16 @@ kubectl delete mysqlcluster my-cluster
 	\item Persistent Volume Claims \textit{(optional)}.
 \end{enumerate}
 
-\paragraph{Example usage with CLI}\mbox{}\\
-
-\noindent Deleting two backups
-
-\begin{lstlisting}
-> msp delete backup "my-backup" "my-backup2"
-\end{lstlisting}
-
-\noindent Deleting cluster along with PVC’s
-
-\begin{lstlisting}
-> msp delete backup "my-backup" --remove-pvc
-\end{lstlisting}
-
 \subsubsection*{Update}
+
+For backups the only value users can update is the backup 
+scheduling time.
+
 \begin{lstlisting}
-kubectl apply -f backup-config.yaml
+> kubectl apply -f backup-config.yaml
 \end{lstlisting}
 
 \paragraph{Data to specify}
 \begin{enumerate}
 	\item Time \textit{CRON style}.
 \end{enumerate}
-
-\paragraph{Example usage with CLI}\mbox{}\\
-
-\noindent Updating time field for my-backup
-
-\begin{lstlisting}
-> msp update backup "my-backup" --time "12 20 * * * *"
-\end{lstlisting}

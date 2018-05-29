@@ -1,33 +1,53 @@
 \chapter{Development Stack}
+
+In this chapter we provide the general overview of our workflow and
+development stack.
+
 \section{Version Control System}
-Our VCS of choice is \textbf{Git}, and our repositories are hosted on \textbf{GitHub}. Being the most popular service,
-GitHub is well integrated with many developer tools such as Golang’s \texttt{go get} and various Continuous Integration systems.
-On top of that, we use common GitHub features for managing current tasks and project development.
+Our VCS of choice is \textbf{Git}, and our repositories are hosted on 
+\textbf{GitHub}. Being the most popular service, GitHub is well integrated 
+with many developer tools such as Golang’s \texttt{go get} and various 
+Continuous Integration systems. On top of that, we use common GitHub features 
+for managing current tasks and project development.
+
 \subsection{Workflow}
-We follow a fairly standard git workflow. New features are developed on separate branches, branched directly off of \texttt{master}.
-Once the code is ready, the branch is pushed to our central GitHub repository and code review is requested from other team members.
-After positive feedback from the CI system and two approvals, the pull request is merged to the \texttt{master} branch.
-To retain a linear git history, all feature branches are rebased onto the \texttt{master} branch before merging.
+We follow a fairly standard git workflow. New features are developed on 
+separate branches, branched directly off of \texttt{master}. Once the code 
+is ready, the branch is pushed to our central GitHub repository and code 
+review is requested from other team members. After positive feedback from 
+the CI system and two approvals, the pull request is merged to the 
+\texttt{master} branch. To retain a linear git history, all feature branches 
+are rebased onto the \texttt{master} branch before merging.
+
 \section{Continuous integration}
-\subsection{Jenkins}
-Due to our familiarity with \textbf{Jenkins}~\cite{jenkins}, it was our first choice when approaching \textit{continuous integration}. Jenkins was
-deployed on a low---spec VPS (\textit{OpenVZ} virtualization). This system was sufficient for the simplest use case --- Golang unit
-testing and notifications through Slack. However, the outdated Linux kernel (2.6.32) on the host machine was not compatible with 
-Docker\footnote{Docker requires version 3.10 or higher} (crucial for Kubernetes), which (along with the necessity to maintain the server ourselves)
-convinced us to look for an alternative.
+
 \subsection{Travis}
-\textbf{Travis CI}~\cite{travis} is a hosted service (free for open source projects). Unlike Jenkins, it does not require server---side configuration,
-but relies only on \texttt{.travis.yml} files placed inside the project source directory (similar functionality in Jenkins can be achieved by using
-the Pipeline plugin~\cite{jnk-pipeline}). This makes it easy to have different test code per branch and removes the necessity to manage permissions
-separately for the repository and for the CI system. Travis integrates easily with the tools used in our project (GitHub and Slack). Along with
-Travis CI, we have decided to use \textbf{Coveralls}~\cite{coveralls} --- a web service that tracks code coverage\footnote{the degree to which the
-source code of a program is executed when a particular test suite runs} over time, and ensures that all new code is fully covered by tests.
+\textbf{Travis CI}~\cite{travis} is a hosted service (free for open source 
+projects). Unlike many other services, it does not require server---side 
+configuration, but relies only on \texttt{.travis.yml} files placed inside 
+the project source directory. This makes it easy to have different test 
+code per branch and removes the necessity to manage permissions separately 
+for the repository and for the CI system. Travis integrates easily with the 
+tools used in our project (GitHub and Slack). Along with Travis CI, we have 
+decided to use \textbf{Coveralls}~\cite{coveralls} --- a web service that 
+tracks code coverage\footnote{the degree to which the source code of a~program 
+is executed when a particular test suite runs} over time, and ensures that 
+all new code is fully covered by tests.
+
 \subsection{Kubernetes Cluster}
-To perform integration tests during the continuous integration process we have decided to use \textbf{Minikube}~\cite{minikube} --- a lightweight
-Kubernetes implementation that creates a VM on the local machine and deploys a simple cluster containing only one node.
+To perform integration tests during the continuous integration process we 
+have decided to use \textbf{Minikube}~\cite{minikube} --- a lightweight
+Kubernetes implementation that creates a VM on the local machine and deploys 
+a simple cluster containing only one node.
+
 \subsection{Continuous Deployment}
-The Docker image built from the \texttt{master} branch is automatically deployed to \textbf{DockerHub}~\cite{docker}. This way users can download
-and use our project easily as a docker image. Each stable version of our project is manually added and reflects a specific git commit.
+The Docker image built from the \texttt{master} branch is automatically 
+deployed to \textbf{DockerHub}~\cite{docker}. This way users can download
+and use our project easily as a docker image. Each stable version of our 
+project is manually added and reflects a specific git commit.
+
 \section{Communication}
-As our communication tool, we have chosen \textbf{Slack}~\cite{slack} --- a modern IRC---like communicator. Slack features persistent chat rooms
-(channels) organized by topic, comes with a large number of third---party services, and supports community---built integrations.
+As our communication tool, we have chosen \textbf{Slack}~\cite{slack} --- 
+a modern IRC---like communicator. Slack features persistent chat rooms
+(channels) organized by topic, comes with a large number of third---party 
+services, and supports community---built integrations.
