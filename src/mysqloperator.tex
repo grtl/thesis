@@ -148,19 +148,43 @@ as a slave to the master MySQL server (Figure \ref{fig:replication} B).
 
 \section{Detailed design of the MySQL backups}
 
-TODO: one more figure, more details
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth, angle=0]{img/cyclic_backups.pdf}
+    \caption{MySQL backup design}
+    \label{fig:backups}
+\end{figure}
 
 \subsubsection*{Backup}
-Cyclic backups of a MySQL cluster are requested by creating a \texttt{MySQLBackup} object. Backup creation is
-handled by a Kubernetes CronJob object created by our operator. A CronJob periodically creates
-Kubernetes jobs which run to completion~\cite{kube-comp}. In our case, each of these jobs creates a
-separate backup instance, without overwriting previous backups. All the backups for a single
-\texttt{MySQLBackup} instance are stored in a single PersistentVolume. The backed up data is not deleted when
-the cron job is cancelled since PersistentVolumes are not owned by our object.
+In order to provide users with cyclic backups of a MySQL cluster, we created 
+two separate CustomResourceDefinitions: \texttt{MySQLBackupSchedule} and 
+\texttt{MySQLBackupInstance}. Objects of the first type are responsible for 
+scheduling and managing the groups of backups. At the same time, objects 
+of the latter type reflect the actual backups created. As a result, each 
+of the \texttt{MySQLBackupSchedules} can have multiple corresponding 
+\texttt{MySQLBackupInstances} --- one for each backup created.
 
-For the actual backup creation we reuse the solution applied for scaling up MySQL clusters. The
-backup mechanism utilizes the same XtraBackup endpoints to get the data from our database. Backups
-are always based on the master node’s data.
+To gain a better understanding of this structure, let’s analyse the Figure 
+\ref{fig:backups}. From the user point of view, cyclic backups are requested 
+by creating a \texttt{MySQLBackupSchedule} object (A). Backup creation is handled 
+by a Kubernetes CronJob object created by our operator. A CronJob periodically 
+creates Kubernetes jobs which run to completion. In our case, each of these 
+jobs creates a separate MySQLBackupInstance object (B). After that, the 
+dedicated operator creates an actual backup without overwriting previous 
+backups. The status of a \texttt{MySQLBackupInstance} object reflects the state of 
+an actual backup --- the user can see if certain backup succeed. Thanks 
+to this design it is also fairly easy to list all the existing backups, 
+it’s simply listing the \texttt{MySQLBackupInstance} objects.
+
+All the backups for a single MySQLBackupSchedule are stored in a single 
+PersistentVolume. The backed up data is not deleted when the cron job is 
+cancelled since PersistentVolumes are not owned by our object.
+
+For the actual backup creation we reuse the solution applied for scaling 
+up MySQL clusters. The backup mechanism utilizes the same XtraBackup endpoints 
+to get the data from our database. Backups are always based on the master 
+node’s data.
+
 
 \subsubsection*{Restore}
 Users can restore any backup instance from a chosen backup schedule. This is simply done by creating
