@@ -1,18 +1,18 @@
 \chapter{Development Stack}
 
 In this chapter we provide the general overview of our workflow and
-development stack.
+the development stack.
 
 \section{Version Control System}
-Our VCS of choice is \textbf{Git}, and our repositories are hosted on 
-\textbf{GitHub}. Being the most popular service, GitHub is well integrated 
-with many developer tools such as Golang’s \texttt{go get} and various 
-Continuous Integration systems. On top of that, we use common GitHub features 
-for managing current tasks and project development.
+Our version control system of choice is \textbf{Git} with the
+\textbf{GitHub}~\footnote{https://github.com} hosting. Being the most popular
+service, GitHub is well integrated  with many developer tools such as Golang’s
+\texttt{go get} and various continuous integration systems. On top of that,
+we use common GitHub features for managing current tasks and project development.
 
 \subsection{Workflow}
 We follow a fairly standard git workflow. New features are developed on 
-separate branches, branched directly off of \texttt{master}. Once the code 
+separate branches, branched directly off of \texttt{master}. Once the code
 is ready, the branch is pushed to our central GitHub repository and code 
 review is requested from other team members. After positive feedback from 
 the CI system and two approvals, the pull request is merged to the 
@@ -23,8 +23,8 @@ are rebased onto the \texttt{master} branch before merging.
 
 \subsection{Travis}
 \textbf{Travis CI}~\cite{travis} is a hosted service (free for open source 
-projects). Unlike many other services, it does not require server---side 
-configuration, but relies only on \texttt{.travis.yml} files placed inside 
+projects). Unlike many other services, it does not require server-side 
+configuration, but relies only on .travis.yml files placed inside 
 the project source directory. This makes it easy to have different test 
 code per branch and removes the necessity to manage permissions separately 
 for the repository and for the CI system. Travis integrates easily with the 
@@ -48,6 +48,6 @@ project is manually added and reflects a specific git commit.
 
 \section{Communication}
 As our communication tool, we have chosen \textbf{Slack}~\cite{slack} --- 
-a modern IRC---like communicator. Slack features persistent chat rooms
-(channels) organized by topic, comes with a large number of third---party 
-services, and supports community---built integrations.
+a modern IRC-like communicator. Slack features persistent chat rooms
+(channels) organized by topic, comes with a large number of third-party 
+services, and supports community-built integrations.

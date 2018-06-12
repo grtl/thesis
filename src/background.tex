@@ -13,9 +13,9 @@ example due to machine failures or scheduling decisions on Kubernetes' part. Wha
 Kubernetes objects represent stateless constructs. When deploying a stateful application, such as a
 MySQL database cluster, we need to use structures designed specifically for such stateful cases. In
 the latest versions of Kubernetes, we are provided with some useful stateful objects, such as
-PersistentVolumes or StatefulSets. It’s useful to make a note about Kubernetes’ design philosophy.
+PersistentVolumes or StatefulSets. It is useful to make a note about Kubernetes’ design philosophy.
 Kubernetes objects are meant to be just that --- objects. They are to represent nouns rather than
-verbs. As such, we usually don’t create objects that are responsible for a single action. Instead,
+verbs. As such, we usually do not create objects that are responsible for a single action. Instead,
 for example, one may create an object that represents an agent that performs the desired action
 periodically.
 
@@ -39,7 +39,7 @@ continuous work of cluster applications.
 \end{figure}
 
 To get a better understanding of Kubernetes structure, let’s avail ourselves of the data presented
-in the Figure \ref{fig:arch}. Each worker node is equipped with a \textit{kubelet} program
+in the Figure \ref{fig:arch}. Each worker node is equipped with a program called \textbf{kubelet},
 responsible for managing Pods on that particular node, and for communication with the master. The
 kube-apiserver runs on every node in order to provide TCP and UDP forwarding across the backend.
 
@@ -56,12 +56,12 @@ result in queries and modifications of the data stored in etcd.
 
 \section{Expanding the Kubernetes API}
 Kubernetes was designed to be easily extensible and configurable~\cite{extending-kubeapi}. There are
-many ways of customizing the API and adding new functionalities, so called Custom Resources.
+many ways of customizing the API and adding new functionalities, so called \textbf{custom resources}.
 
-The idea behind Custom Resources is to allow the user to define new API objects that can be handled
+The idea behind custom resources is to allow the user to define new API objects that can be handled
 in the same way as resources already understood by Kubernetes. As a result, they provide a way of
 customizing a specific Kubernetes installation, exposing new behavior that can be accessed via the
-same kubectl operations as default resources. There are two ways of defining Custom Resources: using
+same kubectl operations as default resources. There are two ways of defining custom resources: using
 the aggregation layer or Custom Resource Definitions.
 
 The first way of expanding the Kubernetes API, introduced in Kubernetes 1.7, is using the
@@ -69,8 +69,8 @@ aggregation layer. Thanks to this tool, one can perform API aggregation at runti
 layer enables the creation of custom resources by deploying its own API server.
 \textbf{Custom Resource Definitions} (CRDs) are static objects in the API. A user can create a
 Custom Resource Definition object in the API, specifying a name and schema for the type of custom
-resource they wish to introduce. Once a CRD exists, Custom Resource objects of the defined type can
-be created by users. This way of creating Custom Resources provides developers with less flexibility
+resource they wish to introduce. Once a CRD exists, custom resource objects of the defined type can
+be created by users. This way of creating custom resources provides developers with less flexibility
 than aggregation layers but requires less overhead for simple applications.
 
 The MySQL operator is implemented using Custom Resource Definitions because of the simplicity and

@@ -7,12 +7,12 @@ problems faced by software engineers every day. This has led to the emergence of
 technologies that orchestrate entire clusters, providing automatization that
 makes managing such systems easier.
 
-\textit{Kubernetes} is an open-source container orchestrator developed by
+\textbf{Kubernetes} is an open-source container orchestrator developed by
 Google. It is used by leading tech companies to automate the deployment,
 scaling, and management of their applications~\cite{kube-usecase}. Its common
 use cases are cloud computing systems and microservices-oriented architectures.
 
-The main feature provided by \textit{Kubernetes} and similar orchestration
+The main feature provided by Kubernetes and similar orchestration
 systems is the management of containerized applications. Containers are
 a~lightweight and portable alternative to virtual machines. In recent years,
 the~advantages of containerization have been recognised, which has led to
@@ -20,46 +20,44 @@ the~rapid development of supporting technologies, such as Docker or rkt.
 
 A central part of many web applications is a~performant database. Despite
 the~variety of new database engines constantly appearing on the market, many
-developers still decide to rely on \textit{MySQL}. According to the db-engines
-statistics~\cite{db-eng}, \textit{MySQL} is the second most used database
+developers still decide to rely on \textbf{MySQL}. According to the db-engines
+statistics~\cite{db-eng}, MySQL is the second most used database
 engine.
 
-Our project is focused on developing tools for creating and managing
+Our project is focused on developing tools for setting up and managing
 a~\textbf{LAMP}\footnote{Linux host with Apache web server, MySQL database
-and PHP programming language} stack in \textit{Kubernetes}. Our main goal is to
-extend the \textit{Kubernetes API} with options for \textit{MySQL} database
+and PHP programming language} stack in Kubernetes. Our main goal is to
+extend the Kubernetes API with options for MySQL database
 management and provide users with a user-friendly command line tool. As
 a~result, developers should be able to more effortlessly benefit from
-\textit{Kubernetes’} advantages, such as scalability. Leveraging the powerful
-abstraction system provided by \textit{Kubernetes} in such a way will remove
+Kubernetes’ advantages, such as scalability. Leveraging the powerful
+abstraction system provided by Kubernetes in such a way will remove
 much of the complexity traditionally caused by the database layer of
 an~application.
 
 There are existing unofficial tools with similar functionalities for various
-databases and systems. \textit{Vitess}~\cite{vitess} is an~open source
-clustering system for \textit{MySQL} databases that can interface with
-\textit{Kubernetes}. We are aiming for a simpler solution that utilizes
-\textit{Kubernetes'} native method of extending its API ---
+databases and systems. Vitess~\cite{vitess} is an~open source
+clustering system for MySQL databases that can interface with
+Kubernetes. We are aiming for a simpler solution that utilizes
+Kubernetes' native method of extending its API ---
 \textbf{Custom Resource Definitions} (CRDs). Another existing tool,
-\textit{Postgres operator}~\cite{psql-op}, is closer in scope to what we want to
-accomplish, providing a CustomResourceDefinition for \textit{Postgres} 
-databases instead of \textit{MySQL}.
+Crunchy Data PostgreSQL Operator~\cite{psql-op}, is closer in scope to what we want to
+accomplish, providing a CRD for Postgres databases.
 
 This dissertation is divided into eight chapters. We start with the necessary 
-preliminary knowledge about Kubernetes and Custom Resources. Next, we cover 
+preliminary knowledge about Kubernetes and custom resources. Next, we cover 
 our workflow and development stack. The main chapter describes the design and 
-implementation details of the MySQL Operator functionalities. The following 
-chapter consists of essential information of the command line interface we 
-provided to facilitate the usage of our tools. The final sections explain main 
-design decisions, obstacles encountered, and future considerations for further 
-work on the project.
+implementation details of the MySQL Operator's functionalities. The following 
+chapter covers the command line interface we  provided to facilitate the usage
+of our tools. The final sections explain main  design decisions, obstacles encountered,
+and future considerations for further work on the project.
 
 We were working together on all parts of the implementation, however there are 
 some areas which certain team members were responsible for. Marcin Chrzanowski 
-was involved in Stateful Set and MySQL Cluster creation and deletion. Jakub 
-Sarzyński’s main task was to provide a Command Line Interface for our tools. 
-Agnieszka Świetlik was responsible for backups design and implementation. Mikołaj 
-Walczak was the core of our team, he was in charge of Continuous Integration, 
+was involved in MySQLCluster creation and deletion. Jakub 
+Sarzyński’s main task was to provide a command line interface. 
+Agnieszka Świetlik was responsible for the design and implementation of backups. Mikołaj 
+Walczak was the core of our team, he was in charge of the Continuous Integration system, 
 testing and putting the project parts together. Disregarding this basic division, 
 we worked as a team and every member participated equally in the creation process 
 of this project and dissertation.
