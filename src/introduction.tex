@@ -26,7 +26,7 @@ engine.
 
 Our project is focused on developing tools for setting up and managing
 a~\textbf{LAMP}\footnote{Linux host with Apache web server, MySQL database
-and PHP programming language} stack in Kubernetes. Our main goal is to
+and PHP as the server-side programming language.} stack in Kubernetes. Our main goal is to
 extend the Kubernetes API with options for MySQL database
 management and provide users with a user-friendly command line tool. As
 a~result, developers should be able to more effortlessly benefit from
@@ -40,8 +40,8 @@ databases and systems. Vitess~\cite{vitess} is an~open source
 clustering system for MySQL databases that can interface with
 Kubernetes. We are aiming for a simpler solution that utilizes
 Kubernetes' native method of extending its API ---
-\textbf{Custom Resource Definitions} (CRDs). Another existing tool,
-Crunchy Data PostgreSQL Operator~\cite{psql-op}, is closer in scope to what we want to
+\textbf{CustomResourceDefinitions} (CRDs). Another existing tool,
+the Crunchy Data PostgreSQL Operator~\cite{psql-op}, is closer in scope to what we want to
 accomplish, providing a CRD for Postgres databases.
 
 This dissertation is divided into eight chapters. We start with the necessary 
@@ -52,12 +52,13 @@ chapter covers the command line interface we  provided to facilitate the usage
 of our tools. The final sections explain main  design decisions, obstacles encountered,
 and future considerations for further work on the project.
 
-We were working together on all parts of the implementation, however there are 
-some areas which certain team members were responsible for. Marcin Chrzanowski 
-was involved in MySQLCluster creation and deletion. Jakub 
-Sarzyński’s main task was to provide a command line interface. 
-Agnieszka Świetlik was responsible for the design and implementation of backups. Mikołaj 
-Walczak was the core of our team, he was in charge of the Continuous Integration system, 
-testing and putting the project parts together. Disregarding this basic division, 
-we worked as a team and every member participated equally in the creation process 
-of this project and dissertation.
+We collaborated closely as a team on both the MySQL Operator as well as this
+dissertation. All design decisions were discussed between the four of us and
+agreed upon by consensus. Marcin Chrzanowski was mostly responsible for
+implementing the MySQLCluster operator's functionalities. Jakub Sarzyński
+created most of the command line interface. Agnieszka Świetlik was responsible
+for implementing the backup system. Mikołaj Walczak took on an unofficial tech
+lead role and was also in charge of setting up our development infrastructure.
+He administrated the Continuous Integration system, managed software
+dependencies, and set up testing, in addition to contributing code to various
+areas of the project.

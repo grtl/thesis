@@ -1,12 +1,12 @@
 \chapter{Development Stack}
 
 In this chapter we provide the general overview of our workflow and
-the development stack.
+development stack.
 
 \section{Version Control System}
-Our version control system of choice is \textbf{Git} with the
-\textbf{GitHub}~\footnote{https://github.com} hosting. Being the most popular
-service, GitHub is well integrated  with many developer tools such as Golang’s
+Our version control system of choice is Git and we host our repository on
+GitHub~\footnote{https://github.com}. Being the most popular git host,
+GitHub is well integrated  with many developer tools such as Golang’s
 \texttt{go get} and various continuous integration systems. On top of that,
 we use common GitHub features for managing current tasks and project development.
 
@@ -22,32 +22,35 @@ are rebased onto the \texttt{master} branch before merging.
 \section{Continuous integration}
 
 \subsection{Travis}
-\textbf{Travis CI}~\cite{travis} is a hosted service (free for open source 
-projects). Unlike many other services, it does not require server-side 
+Travis CI~\cite{travis} is a hosted continuous integration service with
+a free option for open source projects.
+Unlike many other services, it does not require server-side 
 configuration, but relies only on .travis.yml files placed inside 
-the project source directory. This makes it easy to have different test 
+the project's source directory. This makes it easy to have different test 
 code per branch and removes the necessity to manage permissions separately 
-for the repository and for the CI system. Travis integrates easily with the 
-tools used in our project (GitHub and Slack). Along with Travis CI, we have 
-decided to use \textbf{Coveralls}~\cite{coveralls} --- a web service that 
-tracks code coverage\footnote{the degree to which the source code of a~program 
+for the repository and for the CI system. Travis integrates well with other 
+tools used in our project (GitHub and Slack).
+
+Along with Travis CI, we have 
+decided to use Coveralls~\cite{coveralls} --- a web service that 
+tracks code coverage\footnote{the percentage of the source code of a~program 
 is executed when a particular test suite runs} over time, and ensures that 
 all new code is fully covered by tests.
 
 \subsection{Kubernetes Cluster}
 To perform integration tests during the continuous integration process we 
-have decided to use \textbf{Minikube}~\cite{minikube} --- a lightweight
+used Minikube~\cite{minikube} --- a lightweight
 Kubernetes implementation that creates a VM on the local machine and deploys 
 a simple cluster containing only one node.
 
 \subsection{Continuous Deployment}
 The Docker image built from the \texttt{master} branch is automatically 
-deployed to \textbf{DockerHub}~\cite{docker}. This way users can download
+deployed to DockerHub~\cite{docker}. This way users can download
 and use our project easily as a docker image. Each stable version of our 
 project is manually added and reflects a specific git commit.
 
 \section{Communication}
-As our communication tool, we have chosen \textbf{Slack}~\cite{slack} --- 
+As our communication tool, we have chosen Slack~\cite{slack} --- 
 a modern IRC-like communicator. Slack features persistent chat rooms
 (channels) organized by topic, comes with a large number of third-party 
 services, and supports community-built integrations.

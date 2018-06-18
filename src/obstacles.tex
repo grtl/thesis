@@ -3,28 +3,28 @@ In this chapter we describe the biggest difficulties we encountered while implem
 and how we resolved them.
 
 \section{High Entry Threshold}
-Kubernetes is a fairly new project, but already highly advanced and complex. It is constantly
-improving and changing. It is written in Go - the programming language we started learning
-simultaneously with the implementation of this project. We had to get a good grasp of Kubernetes’
+Kubernetes is a fairly young project, but already highly advanced and complex. It is constantly
+improving and changing. It is written in Go --- a programming language none of
+us had used before starting work on this project. We had to get a good grasp of Kubernetes’
 high-level philosophy, as well as dive deep into the detailed design of its objects and the
 lower-level internals of how they are managed and manipulated. We had to wade through large amounts
 of documentation (some of it freshly written for beta features) before we could make educated
 decisions about our project.
 
-All of the above created a very high entry threshold for the project. We managed to succeed by
+All of the above created a very high entry threshold. We managed to succeed by
 first gaining a high level overview of Kubernetes, and then starting the coding stage as fast as
-possible. The iterative, incremental approach to the problem allowed us to learn on our own mistakes
-and adopt new concepts at a fast pace. It should also not be forgotten that we were getting an
+possible. The iterative, incremental approach to the problem allowed us to learn from our own mistakes
+and adopt new concepts at a fast pace. It should also not be forgotten that we were getting
 invaluable help from our Google mentor at every stage of our project implementation.
 
 \section{Versioning}
-As mentioned above, Kubernetes is a brand new project, initially released in 2014. As a result,
+As mentioned above, Kubernetes is a fairly young project, initially released in 2014. As a result,
 almost all of its components are regularly updated and stabilized. In November 2017, when we
-started working on this project, Kubernetes stable release was version 1.8. By January 2018 it was
+started working on this project, Kubernetes' stable release was version 1.8. By January 2018 it was
 already in version 1.9 and on 24th April the 1.10 release was introduced~\cite{releases}. We had to adjust our
 project to the constant changes in our toolkit. Many of the resources we were working on were
 being moved between their alpha, beta and stable releases during the work on our project. The key to
-success was to constantly follow the Kubernetes blog~\cite{blog} and keep track of the most important novelties
+success was to constantly follow the Kubernetes blog~\cite{blog} and keep track of the most important updates
 on this topic.
 
 \section{Dependency management}
@@ -37,10 +37,10 @@ some dependencies and were trapped in dependency cycles that dep couldn’t hand
 second manager we tried was godep~\cite{godep}. This tool is the predecessor of dep and was available in a more
 stable version. Despite its lack of support for constraints on vendor versions, it fulfilled its
 role for a few months. Trying to keep up with the latest changes in the Kubernetes we were trapped
-in a cycle of manually updating the dependencies and adding them to vendor directory as godep didn’t
+in a cycle of manually updating the dependencies and adding them to the vendor directory as godep didn’t
 support the dependencies not directly referenced in code. Another issue with godep was resolving the
-subdependencies required by more than one dependency. As the stable version of dep has already been
-released at that point we’ve decided to change back and regain the full flexibility of vendor
+subdependencies required by more than one dependency. As the stable version of dep had already been
+released at that point, we decided to change back and regain the full flexibility of vendor
 versioning. It seems to solve our dependency problems for now.
 
 In order to provide users with the correct dependencies while making use of our project we decided
@@ -49,18 +49,20 @@ dependencies, flattened and correctly versioned, i.e. compatible with our projec
 practice in the Go ecosystem.
 
 \section{Continuous Integration}
-Due to our familiarity with Jenkins it was our first choice when setting up a continuous integration.
-As the project was meant to be open-source we’ve decided to use Blue Ocean~\cite{blueocean} with pipelines plugin to
-allow contributors to tweak the build process. The Jenkins setup allowed us for unit testing and
+Due to our familiarity with Jenkins it was our first choice when setting up continuous integration.
+As the project was meant to be open-source we decided to use Blue Ocean~\cite{blueocean} with pipelines plugin to
+allow contributors to tweak the build process. The Jenkins setup allowed for unit testing and
 linter checks. However, the outdated kernel on the server we had access to wasn’t capable of handling
-Docker and any form of Kubernetes cluster --- essential for the integration tests. Along with the
+Docker and any form of Kubernetes cluster --- essential for integration tests. Along with the
 necessity to maintain the Jenkins server ourselves at the expense of the time we could have spent
-on the project we’ve decided to move the continuous integration to a hosted service.
+on the project we decided to move the continuous integration to a hosted service.
 
-With Travis-CI we were able to set up the whole environment we’ve had on Jenkins along with the
-integration tests setup we were previously lacking. The setup of Kubernetes cluster without having 
-the direct access to the machines of our CI didn’t succeed. In the end we had to ask Travis-CI 
-administrators for such privileges. We were able to identify the issue of our application when 
-built on Ubuntu Linux (16.04 used by Travis-CI) would link to the standard libraries, not present 
-on the Alpine Linux (used as a Docker image base). 
+With Travis-CI we were able to set up the whole environment we had on Jenkins along with the
+integration tests setup we were previously lacking.
+
+We had difficulties setting up a Kubernetes cluster without direct access to the machines of our CI.
+In the end we had to ask Travis-CI
+administrators for such privileges. We were able to identify the issue --- our application, when
+built on Ubuntu Linux (16.04 used by Travis-CI), would link to the standard libraries, not present
+on Alpine Linux used as a Docker image base.
 
