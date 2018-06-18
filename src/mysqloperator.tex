@@ -1,11 +1,11 @@
 \chapter{MySQL Operator}
 
 In this chapter the main part of the project is described. First we provide 
-a high-level overview, followed by a detailed design of the MySQL Operator 
-and Backup custom resources. Next, we present basic usage examples.
+a high-level overview, followed by the detailed design of the MySQL Operator 
+and Backup custom resources. The chapter concludes with some basic usage examples.
 
 \section{High-level overview}
-MySQL Operator allows a user to easily deploy replicated MySQL databases on a Kubernetes cluster.
+The MySQL Operator allows a user to easily deploy replicated MySQL databases on a Kubernetes cluster.
 It provides single-command cluster creation, scaling and backup scheduling. The project is divided
 into two essential parts:
 \begin{itemize}
@@ -15,12 +15,12 @@ into two essential parts:
 	resources.
 \end{itemize}
 
-In this chapter we will focus on the first one of mentioned elements.
+In this chapter we will focus on the former.
 
 \subsection{Functionalities}
 The MySQL Operator allows the user to create, delete, update, backup and restore MySQL clusters.
 
-When \textit{creating} the cluster, the operator deploys a new instance of a replicated MySQL
+When \textit{creating} a cluster, the operator deploys a new instance of a replicated MySQL
 database cluster alongside with all additional Kubernetes objects necessary for a proper deployment.
 Additionally, rather than initializing a fresh cluster, data may be \textit{restored} from a backup file.
 
@@ -35,14 +35,15 @@ objects are updated to reflect the new cluster configuration.
 
 We provided users with the ability to schedule backups. \textit{Scheduling a backup} initiates a
 recurring backup. The backup job’s behavior is similar to a cron job’s --- backups are created
-cyclically at regular intervals.
+periodically at regular intervals.
 
 \section{Project Design}
 
-\subsection{Custom Resource Definition design}
+\subsection{CustomResourceDefinition design}
 The main custom resource provided by our project is \textbf{MySQLCluster}. A custom resource of this kind
-represents a cluster of replicated MySQL servers. It has a unique name specified by the user and
-that name also becomes the name of a Kubernetes Service through which the database is exposed.
+represents a cluster of replicated MySQL servers. It has a unique name specified by the user.
+That name also becomes the name of a Kubernetes Service through which the database is exposed.
+
 Another custom resource defined in our project is \textbf{MySQLBackup}. Objects of this kind are created when
 the user wants to schedule database backups. Each instance of this resource corresponds to a backup
 schedule request for a specific cluster.
@@ -53,8 +54,7 @@ the controller and operator patterns. A \textbf{controller} is an informer whose
 to monitor changes in an application’s state. On each change, a predefined controller function is
 executed. An \textbf{operator} builds on ideas from the controller pattern and basic Kubernetes
 concepts. It is responsible for creating, configuring and managing stateful applications running on
-clusters. Operators extend the Kubernetes API and create multiple instances of applications like
-core Kubernetes resources.
+clusters. Operators essentially extend the Kubernetes API.
 
 \begin{figure}[!ht]
     \centering
@@ -72,7 +72,7 @@ received and the corresponding operator handler is called by the controller.
 We use the controller and operator patterns to manage resources related to both 
 MySQL servers and backup jobs. A high level overview of the project design is
 illustrated in Figure \ref{fig:design}. During operator startup, two
-CustomResourceDefinitions (figure \ref{fig:design} A) are registered into the Kubernetes API.
+CustomResourceDefinitions (Figure \ref{fig:design} A) are registered into the Kubernetes API.
 From this point on, users can define their own custom resource instances (Figure \ref{fig:design} B) ---
 MySQLClusters (ex. C1, C2) and MySQLBackupSchedules (ex. B1, B2). Each kind of
 custom resource has its corresponding controller listening and reacting to changes on these
@@ -102,7 +102,7 @@ A Service object represents the network configuration necessary to expose a spec
 particular domain name and port. To expose the MySQLCluster we create what’s called a
 “headless Service.” No specific IP address is configured. Instead, we specify which Pods (the ones
 managed by our StatefulSet) should be available under the given address. The Service then configures
-Kubernetes’s DNS to return an \textbf{A record}\footnote{An \textbf{A record} maps a domain name to
+Kubernetes’ DNS to return an \textbf{A record}\footnote{An \textbf{A record} maps a domain name to
 the IP address (IPv4) of the computer hosting the domain.} pointing at each of the Pods. This
 essentially means that DNS load balancing is used to load balance queries to the database cluster.
 
@@ -135,8 +135,10 @@ message. The cluster might be partially updated and its previous state is not re
 Core Kubernetes structures, such as StatefulSets or Services, are already equipped with mechanisms
 for scaling and configuration updates that do most of the work for us (for example, starting up new
 Pods if the replica count is increased). However, when scaling up, we need to copy the cluster’s
-data to the newly created replicas. To achieve non-blocking replication, every pod has an XtraBackup
-container running beside the main MySQL server container. \textbf{Percona XtraBackup}~\cite{percona}
+data to the newly created replicas.
+
+To achieve non-blocking replication, every pod has an XtraBackup
+container running beside the main MySQL server container.  \textbf{Percona XtraBackup}~\cite{percona}
 is a popular, lightweight, and easy to use program that replicates data from a database without
 stopping it. When a new Pod in a StatefulSet is created, its initial data is copied from the
 previous Pod by connecting to its XtraBackup (exposed via ncat\footnote{Tool to read from and
@@ -163,23 +165,23 @@ of the latter type reflect the actual backups created. As a result, each
 of the MySQLBackupSchedules can have multiple corresponding 
 MySQLBackupInstances --- one for each backup created.
 
-To gain a better understanding of this structure, let’s analyse the Figure 
-\ref{fig:backups}. From the user point of view, cyclic backups are requested 
+To gain a better understanding of this structure, let’s analyse Figure 
+\ref{fig:backups}. From the user's point of view, cyclic backups are requested 
 by creating a MySQLBackupSchedule object (A). Backup creation is handled 
 by a Kubernetes CronJob object created by our operator. A CronJob periodically 
-creates Kubernetes jobs which run to completion. In our case, each of these 
-jobs creates a separate MySQLBackupInstance object (B). After that, the 
-dedicated operator creates an actual backup without overwriting previous 
+creates Kubernetes Jobs which run to completion. In our case, each
+Job creates a separate MySQLBackupInstance object (B). After that, the 
+operator creates an actual backup without overwriting previous 
 backups. The status of a MySQLBackupInstance object reflects the state of 
-an actual backup --- the user can see if certain backup succeed. Thanks 
-to this design it is also fairly easy to list all the existing backups, 
-it’s simply listing the MySQLBackupInstance objects.
+an actual backup --- the user can see if a specific backup succeed. Thanks 
+to this design it is also fairly easy to list all existing backups, 
+simply by listing the MySQLBackupInstance objects.
 
 All the backups for a single MySQLBackupSchedule are stored in a single 
-PersistentVolume. The backed up data is not deleted when the cron job is 
-cancelled since PersistentVolumes are not owned by our object.
+PersistentVolume. The backed up data is not deleted when the CronJob is 
+deleted since PersistentVolumes are not owned by our object.
 
-For the actual backup creation we reuse the solution applied for scaling 
+To actually create backups we reuse the solution applied for scaling 
 up MySQL clusters. The backup mechanism utilizes the same XtraBackup endpoints 
 to get the data from our database. Backups are always based on the master 
 node’s data.
@@ -200,8 +202,8 @@ recommended option is to start a MySQL Operator image as a Deployment in the clu
 \subsection{Cluster}
 \subsubsection*{Create/Restore}
 
-The MySQLCluster creation is the most essential part of the 
-workflow. At this point user has to decide on cluster configuration.
+MySQLCluster creation is the most essential part of the 
+workflow. Here, the user has to specify the cluster's configuration.
 
 \lstset{emph={"password", my-password}, emphstyle=\itshape}
 \begin{lstlisting}
@@ -213,7 +215,7 @@ workflow. At this point user has to decide on cluster configuration.
 
 \paragraph{Data to specify}
 \begin{enumerate}
-	\item Cluster name.\footnote{Cluster name must be unique, it will be the future reference
+	\item Cluster name.\footnote{The cluster name must be unique, it will be the future reference
 	to the cluster.}
 	\item Root password \textit{(Kubernetes secret)}.
 	\item MySQL port \textit{(optional, defaults to 3306)}.
@@ -256,7 +258,7 @@ OR
 \paragraph{Data to specify}
 \begin{enumerate}
 	\item Cluster name \textit{(one or more)}.
-	\item Persistent Volume Claims \textit{(optional)}.
+	\item PersistentVolumeClaims \textit{(optional)}.
 \end{enumerate}
 
 \subsubsection*{Update}
@@ -280,7 +282,7 @@ cluster name.
 \subsection{Backup}
 \subsubsection*{Create}
 
-During the backup creation users specify how often they want their backups 
+During backup creation, users specify how often they want their backups 
 to be created.
 
 \begin{lstlisting}
@@ -291,14 +293,14 @@ to be created.
 \begin{enumerate}
 	\item Backup name \textit{(optional: defaults to auto generated based on cluster name)}.
 	\item Cluster name.
-	\item Time \textit{(CRON style, required)}.
+	\item Time \textit{(Cron style, required)}.
 	\item Storage \textit{(optional: default to the Cluster storage size)}.
 \end{enumerate}
 
 \noindent  \textbf{Additional info}
 
-\noindent Database will be backed up in an automatically claimed Persistent Volume with the size
-calculated based on the cluster current database size.
+\noindent The database will be backed up in an automatically claimed PersistentVolume with the size
+calculated based on the cluster's current database size.
 
 \paragraph{Example \textbf{backup-config.yaml}}
 \begin{lstlisting}[caption=backup-config.yaml,captionpos=b]
@@ -314,8 +316,8 @@ spec:
 
 \noindent  \textbf{Getting backup instances}
 
-\noindent For getting created backup instances with a valuable output we recommend
-using output flag with the following configuration:
+\noindent For listing meaningful information about the created backup instances we recommend
+using the \texttt{output} flag with the following configuration:
 
 \begin{lstlisting}
 kubectl get mbi -o custom-columns="NAME:metadata.name,\
@@ -331,7 +333,7 @@ bckp-instance Completed bckp      my-cluster 2018-04-27T14:42:33Z
 
 \subsubsection*{Delete}
 
-Deletion of the backups works in the same way as the cluster deletion.
+Deletion of a backup schedule works in the same way as the cluster deletion.
 
 \begin{lstlisting}
 > kubectl delete mysqlbackupschedule my-backup
@@ -342,7 +344,7 @@ OR
 \paragraph{Data to specify}
 \begin{enumerate}
 	\item Cluster name \textit{(one or more)}.
-	\item Persistent Volume Claims \textit{(optional)}.
+	\item PersistentVolumeClaims \textit{(optional)}.
 \end{enumerate}
 
 \subsubsection*{Update}
@@ -356,5 +358,5 @@ scheduling time.
 
 \paragraph{Data to specify}
 \begin{enumerate}
-	\item Time \textit{CRON style}.
+    \item Time \textit{(CRON style)}.
 \end{enumerate}

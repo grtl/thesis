@@ -1,6 +1,6 @@
 \chapter{Final thoughts}
-In this chapter we present our final thoughts and conclusions. We explain the possible extensions
-and improvements to this project, which were not implemented due to time limitations and certain
+In this chapter we present our final thoughts and conclusions. We explain possible extensions
+and improvements to this project that were not implemented due to time limitations and certain
 project decisions.
 
 \section{Future Development}
@@ -13,28 +13,29 @@ the creation of backups. However, this connection should be secured with a passw
 
 Another good extension would be making use of Kubernetes events. Events are meant to provide
 human-readable descriptions of actions related to this resource that have taken place. We did not
-manage to implement it because events support for Custom Resources was not yet available during our
+manage to implement it because events support for custom resources was not yet available during our
 work on the project.
 
 The final and biggest potential development is providing direct support for Apache/PHP applications.
-For example, a \texttt{LAMPApplication} custom resource could be provided. The operator for these objects
+For example, a LAMPApplication custom resource could be provided. The operator for these objects
 would manage a replicated Apache deployment of a PHP app, along with a MySQL server cluster.
 This could be handled in several ways --- either creating a MySQLCluster object and using the
-operator for MySQL servers we already developed, or requiring the \texttt{LAMPApplication} spec to contain
+operator for MySQL servers we already developed, or requiring the LAMPApplication spec to contain
 the name of a service exposing a MySQL server. The latter solution would give more flexibility to
 the user, but would require more steps to set up a working LAMP stack.
 
 Additionally, this approach would only work for the simplest kinds of PHP applications.
 Many commonly used PHP applications (Wordpress, Drupal, Joomla etc.) are not entirely stateless and
-would require more intricate management. It would be impossible to design a \texttt{LAMPApplication} object
-general enough to handle all of these cases. For the simplest case on the other hand user would not
-benefit from adding another layer of abstraction, as they can be easily deployed as a single
+would require more intricate management. It would be impossible to design a LAMPApplication object
+general enough to handle all of these cases. For the simplest case, on the other
+hand, users would not benefit from an added layer of abstraction, as they can be easily deployed as a single
 Kubernetes Deployment.
 
 \section{Conclusions}
 The purpose of this project was to implement a LAMP stack for Kubernetes. We managed to complete
-this task, with respect to a few project decisions. The Apache and PHP can be implemented as
-deployments on docker images provided by users. Consequently, we focused on implementing the most
+this task, with respect to a few project decisions. The Apache and PHP
+components can already be easily implemented as
+deployments on Docker images provided by users. Consequently, we focused on implementing the most
 complex layer of LAMP --- a MySQL operator to facilitate the creation of a cluster of replicated
 MySQL databases. Users are also provided with a CLI that allows for user-friendly interactions with
 the operator.
@@ -42,5 +43,6 @@ the operator.
 Our project is fully open-source, released under the Apache License 2.0, just as Kubernetes is. As
 far as we can tell, there is a demand for tools managing MySQL on this system. That is why our
 project has such a wide appeal. At the moment of finishing work, it had 15 stars, 8 watches and 3
-forks on Github. As for our competitors: at the beginning of 2018, Oracle started implementing their
-own version of a MySQL Operator, available on Github~\cite{oracle}
+forks on Github. We are also not the only ones that thought it useful to create
+such an operator: at the beginning of 2018, Oracle started implementing their
+own version of a MySQL operator, available on Github~\cite{oracle}.
