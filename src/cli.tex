@@ -68,7 +68,7 @@ These use cases show most of the actions that can be performed to manage a clust
 	--instance "backup-instance"
 \end{lstlisting}
 
-\noindent Creating a new cluster with specified port, image, storage and number of replicas.
+\noindent Creating a new cluster with specified port, image, storage, and number of replicas.
 
 \begin{lstlisting}
 > msp cluster create "my-cluster" --port 1337 --image mysql:img \
@@ -93,7 +93,7 @@ delete, removing not only the cluster but also all database information.
 \end{lstlisting}
 
 \subsubsection*{Update}
-\noindent Updating cluster with new Secret, port and number of replicas.
+\noindent Updating cluster with new Secret, port, and number of replicas.
 
 \begin{lstlisting}
 > msp update cluster "my-cluster" --replicas 4 --port 1337 \

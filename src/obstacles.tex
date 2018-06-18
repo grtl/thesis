@@ -23,7 +23,7 @@ almost all of its components are regularly updated and stabilized. In November 2
 started working on this project, Kubernetes' stable release was version 1.8. By January 2018 it was
 already in version 1.9 and on 24th April the 1.10 release was introduced~\cite{releases}. We had to adjust our
 project to the constant changes in our toolkit. Many of the resources we were working on were
-being moved between their alpha, beta and stable releases during the work on our project. The key to
+being moved between their alpha, beta, and stable releases during the work on our project. The key to
 success was to constantly follow the Kubernetes blog~\cite{blog} and keep track of the most important updates
 on this topic.
 
@@ -57,12 +57,12 @@ Docker and any form of Kubernetes cluster --- essential for integration tests. A
 necessity to maintain the Jenkins server ourselves at the expense of the time we could have spent
 on the project we decided to move the continuous integration to a hosted service.
 
-With Travis-CI we were able to set up the whole environment we had on Jenkins along with the
+With Travis CI we were able to set up the whole environment we had on Jenkins along with the
 integration tests setup we were previously lacking.
 
 We had difficulties setting up a Kubernetes cluster without direct access to the machines of our CI.
-In the end we had to ask Travis-CI
+In the end we had to ask Travis CI
 administrators for such privileges. We were able to identify the issue --- our application, when
-built on Ubuntu Linux (16.04 used by Travis-CI), would link to the standard libraries, not present
+built on Ubuntu Linux (16.04 used by Travis CI), would link to the standard libraries, not present
 on Alpine Linux used as a Docker image base.
 
