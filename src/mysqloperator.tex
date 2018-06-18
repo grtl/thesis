@@ -6,7 +6,7 @@ and Backup custom resources. The chapter concludes with some basic usage example
 
 \section{High-level overview}
 The MySQL Operator allows a user to easily deploy replicated MySQL databases on a Kubernetes cluster.
-It provides single-command cluster creation, scaling and backup scheduling. The project is divided
+It provides single-command cluster creation, scaling, and backup scheduling. The project is divided
 into two essential parts:
 \begin{itemize}
 	\item The actual operator --- a running service which listens for changes on custom resource
@@ -18,7 +18,7 @@ into two essential parts:
 In this chapter we will focus on the former.
 
 \subsection{Functionalities}
-The MySQL Operator allows the user to create, delete, update, backup and restore MySQL clusters.
+The MySQL Operator allows the user to create, delete, update, backup, and restore MySQL clusters.
 
 When \textit{creating} a cluster, the operator deploys a new instance of a replicated MySQL
 database cluster alongside with all additional Kubernetes objects necessary for a proper deployment.
@@ -53,7 +53,7 @@ The MySQL Operator’s implementation is primarily based on two common Kubernete
 the controller and operator patterns. A \textbf{controller} is an informer whose responsibility is
 to monitor changes in an application’s state. On each change, a predefined controller function is
 executed. An \textbf{operator} builds on ideas from the controller pattern and basic Kubernetes
-concepts. It is responsible for creating, configuring and managing stateful applications running on
+concepts. It is responsible for creating, configuring, and managing stateful applications running on
 clusters. Operators essentially extend the Kubernetes API.
 
 \begin{figure}[!ht]
@@ -293,7 +293,7 @@ to be created.
 \begin{enumerate}
 	\item Backup name \textit{(optional: defaults to auto generated based on cluster name)}.
 	\item Cluster name.
-	\item Time \textit{(Cron style, required)}.
+	\item Time \textit{(cron style, required)}.
 	\item Storage \textit{(optional: default to the Cluster storage size)}.
 \end{enumerate}
 
@@ -358,5 +358,5 @@ scheduling time.
 
 \paragraph{Data to specify}
 \begin{enumerate}
-    \item Time \textit{(CRON style)}.
+    \item Time \textit{(cron style)}.
 \end{enumerate}

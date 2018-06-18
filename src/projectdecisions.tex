@@ -3,9 +3,9 @@ In this chapter we describe non-trivial decisions made while designing the proje
 reasons behind them.
 
 \section{Backup}
-Even though it is certain that we want to use Custom Resource Definitions, the question on how to
-use them still remains. The main object in the project is MySQL Cluster, which can be added,
-deleted, updated, scaled freely as a CRD instance. The remaining question is about backups.
+Even though it is certain that we want to use CustomResourceDefinitions, the question on how to
+use them still remains. The main object in the project is MySQLCluster, which can be added,
+deleted, updated, scaled freely as a custom resource. The remaining question is about backups.
 
 We decided to use the operator pattern again for managing backups. In the case of the MySQL
 operator it was fairly obvious what needed to be done to implement a cluster --- create a

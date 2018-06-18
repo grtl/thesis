@@ -47,7 +47,7 @@ kube-apiserver runs on every node in order to provide TCP and UDP forwarding acr
 
 The master node is responsible for processing events in the cluster and making global decisions,
 such as scheduling and scaling. It consists of several components that allow for communication
-between other nodes and cluster users, such as the kube-apiserver, etcd and kube-controller-manager.
+between other nodes and cluster users, such as the kube-apiserver, etcd, and kube-controller-manager.
 One of the most important features of the master node is a server running on it, exposing a RESTful
 API. The API may be queried by users and applications to get information about the cluster’s current
 state, and requests can be made to request the addition, deletion, or modification of various API
@@ -70,9 +70,9 @@ The first way of expanding the Kubernetes API, introduced in Kubernetes 1.7, is 
 aggregation layer. Thanks to this tool, one can perform API aggregation at runtime. The aggregation
 layer enables the creation of custom resources by deploying its own API server.
 
-CustomResourceDefinitions (CRDs) are static objects in the API. A user can create a
+CustomResourceDefinitions are static objects in the API. A user can create a
 CustomResourceDefinition object in the API, specifying a name and schema for the type of custom
-resource they wish to introduce. Once a CRD exists, custom resource objects of the defined type can
+resource they wish to introduce. Once a CustomResourceDefinition exists, custom resource objects of the defined type can
 be created by users. This way of creating custom resources provides developers with less flexibility
 than the aggregation layer, but requires less overhead for simple applications.
 
