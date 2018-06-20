@@ -3,6 +3,22 @@ In this chapter we present our final thoughts and conclusions. We explain possib
 and improvements to this project that were not implemented due to time limitations and certain
 project decisions.
 
+\section{Conclusions}
+The purpose of this project was to implement a LAMP stack for Kubernetes. We managed to complete
+this task, with respect to a few project decisions. The Apache and PHP
+components can already be easily implemented as
+deployments on Docker images provided by users. Consequently, we focused on implementing the most
+complex layer of LAMP --- a MySQL operator to facilitate the creation of a cluster of replicated
+MySQL databases. Users are also provided with a CLI that allows for user-friendly interactions with
+the operator.
+
+Our project is fully open-source, released under the Apache License 2.0, just as Kubernetes is. As
+far as we can tell, there is a demand for tools managing MySQL on this system. That is why our
+project has such a wide appeal. At the moment of finishing work, it had 18 stars, 9 watches, and 3
+forks on Github. We are also not the only ones that thought it useful to create
+such an operator: at the beginning of 2018, Oracle started implementing their
+own version of a MySQL operator, available on Github~\cite{oracle}.
+
 \section{Future Development}
 The project in its current form is fully functioning and ready to use. Nevertheless, there are many
 ways of improving and extending the existing implementation. We will present a few examples.
@@ -30,19 +46,3 @@ would require more intricate management. It would be impossible to design a LAMP
 general enough to handle all of these cases. For the simplest case, on the other
 hand, users would not benefit from an added layer of abstraction, as they can be easily deployed as a single
 Kubernetes Deployment.
-
-\section{Conclusions}
-The purpose of this project was to implement a LAMP stack for Kubernetes. We managed to complete
-this task, with respect to a few project decisions. The Apache and PHP
-components can already be easily implemented as
-deployments on Docker images provided by users. Consequently, we focused on implementing the most
-complex layer of LAMP --- a MySQL operator to facilitate the creation of a cluster of replicated
-MySQL databases. Users are also provided with a CLI that allows for user-friendly interactions with
-the operator.
-
-Our project is fully open-source, released under the Apache License 2.0, just as Kubernetes is. As
-far as we can tell, there is a demand for tools managing MySQL on this system. That is why our
-project has such a wide appeal. At the moment of finishing work, it had 15 stars, 8 watches, and 3
-forks on Github. We are also not the only ones that thought it useful to create
-such an operator: at the beginning of 2018, Oracle started implementing their
-own version of a MySQL operator, available on Github~\cite{oracle}.

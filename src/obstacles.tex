@@ -18,12 +18,12 @@ and adopt new concepts at a fast pace. It should also not be forgotten that we w
 invaluable help from our Google mentor at every stage of our project implementation.
 
 \section{Versioning}
-As mentioned above, Kubernetes is a fairly young project, initially released in 2014. As a result,
+As mentioned above, Kubernetes is a fairly young project, initially released in 2014. As a~result,
 almost all of its components are regularly updated and stabilized. In November 2017, when we
 started working on this project, Kubernetes' stable release was version 1.8. By January 2018 it was
 already in version 1.9 and on 24th April the 1.10 release was introduced~\cite{releases}. We had to adjust our
-project to the constant changes in our toolkit. Many of the resources we were working on were
-being moved between their alpha, beta, and stable releases during the work on our project. The key to
+project to the constant changes in the toolkit. Many of the resources we were working on were
+being moved between their alpha, beta, and stable releases during work on our project. The key to
 success was to constantly follow the Kubernetes blog~\cite{blog} and keep track of the most important updates
 on this topic.
 
@@ -31,7 +31,7 @@ on this topic.
 Dependency management has for a long time been a big problem in Go. The main decision we had to make
 was the choice of a tool for managing dependencies in our project. Our first choice was a tool called
 dep~\cite{dep} as recommended by most Kubernetes articles and because it seemed to be the most up-to-date one,
-being the official experimental dependency manager. Unfortunately, at the beginning of our project,
+being the official experimental dependency manager. Unfortunately, at the beginning of the project,
 dep was not yet production ready, and it didn’t meet our requirements. We encountered trouble adding
 some dependencies and were trapped in dependency cycles that dep couldn’t handle gracefully. The
 second manager we tried was godep~\cite{godep}. This tool is the predecessor of dep and was available in a more
@@ -65,4 +65,3 @@ In the end we had to ask Travis CI
 administrators for such privileges. We were able to identify the issue --- our application, when
 built on Ubuntu Linux (16.04 used by Travis CI), would link to the standard libraries, not present
 on Alpine Linux used as a Docker image base.
-

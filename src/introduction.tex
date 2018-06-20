@@ -16,7 +16,8 @@ The main feature provided by Kubernetes and similar orchestration
 systems is the management of containerized applications. Containers are
 a~lightweight and portable alternative to virtual machines. In recent years,
 the~advantages of containerization have been recognised, which has led to
-the~rapid development of supporting technologies, such as Docker or rkt.
+the~rapid development of supporting technologies, such as Docker\footnote{https://www.docker.com}
+or rkt\footnote{https://coreos.com/rkt/}.
 
 A central part of many web applications is a~performant database. Despite
 the~variety of new database engines constantly appearing on the market, many
@@ -44,10 +45,10 @@ Kubernetes' native method of extending its API ---
 the Crunchy Data PostgreSQL Operator~\cite{psql-op}, is closer in scope to what we want to
 accomplish, providing a CustomResourceDefinition for Postgres databases.
 
-This dissertation is divided into eight chapters. We start with the necessary 
-preliminary knowledge about Kubernetes and custom resources. Next, we cover 
-our workflow and development stack. The main chapter describes the design and 
-implementation details of the MySQL Operator's functionalities. The following 
+This dissertation is divided into eight chapters. We start with the necessary
+preliminary introduction to Kubernetes and custom resources. Next, we cover
+our workflow and development stack. The main chapter describes the design and
+implementation details of the MySQL Operator's functionalities. The following
 chapter covers the command line interface we  provided to facilitate the usage
 of our tools. The final sections explain main  design decisions, obstacles encountered,
 and future considerations for further work on the project.

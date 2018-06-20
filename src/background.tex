@@ -8,7 +8,7 @@ Finally, we provide information about an important concept used in the project -
 \section{Kubernetes Basics}
 On an abstract level, a user interacts with Kubernetes by describing a desired state, which
 Kubernetes then tries to enact. The actual state may be dynamically and constantly changing, for
-example due to machine failures or scheduling decisions on Kubernetes' part. 
+example due to machine failures or scheduling decisions on Kubernetes' part.
 
 Most Kubernetes objects represent stateless constructs. When deploying a stateful application, such as a
 MySQL database cluster, we need to use structures designed specifically for such stateful cases. In
@@ -24,7 +24,7 @@ periodically.
 \section{Kubernetes Architecture}
 
 Kubernetes is a container orchestration tool. Its job is managing containers running on Pods. Pods
-are the atomic units of computing used in Kubernetes --- they are an abstraction for a set of
+are the atomic units of computing used in Kubernetes --- they are an abstraction for a~set of
 containers with shared resources. The real working machines, to which Pods are tied to by the
 scheduler, are referred to as nodes. These work in bigger groups, so-called clusters, which
 create single logical units in Kubernetes. There is one master node, responsible for orchestrating
