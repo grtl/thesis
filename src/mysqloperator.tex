@@ -15,7 +15,7 @@ into two essential parts:
 	resources.
 \end{itemize}
 
-In this chapter we will focus on the former.
+In this chapter we will focus on the former. The latter will be dealt with in chapter 5.
 
 \subsection{Functionalities}
 The MySQL Operator allows the user to create, delete, update, backup, and restore MySQL clusters.
@@ -78,18 +78,18 @@ received and the corresponding operator handler is called by the controller.
 We use the controller and operator patterns to manage resources related to both
 MySQL servers and backup jobs. A high level overview of the project design is
 illustrated in Figure \ref{fig:design}. During operator startup, two
-CustomResourceDefinitions (Figure \ref{fig:design} A) are registered into the Kubernetes API.
-From this point on, users can define their own custom resource instances (Figure \ref{fig:design} B) ---
+CustomResourceDefinitions (Figure \ref{fig:design}~A) are registered into the Kubernetes API.
+From this point on, users can define their own custom resource instances (Figure \ref{fig:design}~B) ---
 MySQLClusters (C\#1, C\#2) and MySQLBackupSchedules (B\#1, B\#2). Each kind of
 custom resource has its corresponding controller listening and reacting to changes on these
 resources. MySQLBackupInstances (I\#1, I\#2) are used to keep track of already started or finished backup jobs.
 The controller ensures that an actual backup file is properly created and deleted.
-The controllers (Figure \ref{fig:design} C), though technically
-goroutines\footnote{Function or methods that run parallel with other functions or methods.} in a single
+The controllers (Figure \ref{fig:design}~C), though technically
+goroutines\footnote{Lightweight threads managed by the Go runtime.} in a single
 MySQL Operator process, can be thought of as separate processes responsible for separate parts of the
 cluster’s architecture. Thanks to these constructs we can monitor custom resource instances and adjust
 all the related objects as necessary. The operator pattern was designed for stateful applications, making
-it suitable for both database cluster and backup management.~\cite{coreos}
+it suitable for both database cluster and backup management~\cite{coreos}.
 
 \subsection{Detailed design of the MySQL cluster}
 
@@ -115,7 +115,7 @@ the IP address (IPv4) of the computer hosting the domain.} pointing at each of t
 essentially means that DNS load balancing is used to load balance queries to the database cluster.
 
 \subsubsection*{Delete}
-When a MySQLCluster instance is deleted, all the related objects should be cleared from Kubernetes
+When a MySQLCluster instance is deleted, all related objects should be cleared from Kubernetes
 as well. Thanks to the \texttt{ownerReferences} attribute, we do not have to worry about manual
 deletion of dependent structures. Kubernetes understands that some objects are owned by others, and
 when a parent object is deleted, the children will be deleted as well. Thus all we have to do is to set
@@ -232,7 +232,7 @@ workflow. Here, the user has to specify the cluster's configuration.
 	\item Storage size \textit{(optional, default to 1Gi)}.
 	\item Custom mysql image. \textit{(optional)}.
 	\item Backup name \textit{(optional)}.\footnote{If provided, initial cluster data is restored
-	from backup.}
+	from the backup.}
 \end{enumerate}
 
 \paragraph{Example \textbf{cluster-config.yaml}}

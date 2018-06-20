@@ -1,9 +1,10 @@
 \chapter{Command Line Tool}
 In this chapter we describe \texttt{msp} --- a command line tool we created
-to facilitate usage of the MySQL Operator. First, we explain the basic CLI
-concept, followed by a description of technologies used, and finally a
-detailed description of the functionalities provided by our tool. We also
-provide a few usage examples to outline the most common use cases.
+to facilitate usage of the MySQL Operator. First, we explain the basic
+\textbf{CLI}~\footnote{Command-Line Interface} concept, followed by a description
+of technologies used, and finally a detailed description of the functionalities
+provided by our tool. We also provide a few usage examples to outline the most
+common use cases.
 
 \section{CLI Basics}
 \texttt{msp} provides a layer of abstraction over management of MySQLCluster
@@ -16,10 +17,10 @@ write more concise and expressive automation scripts.
 
 \section{Technologies}
 Like the rest of our project, \texttt{msp} is written in Go. Our implementation
-bases on Cobra~\cite{cobra} --- a framework for writing command line interfaces
+bases on Cobra~\cite{cobra} --- a~framework for writing command line interfaces
 similar to many UNIX shell programs. Cobra is widely used in the Go and
-Kubernetes ecosystems, most prominently in \texttt{kubectl} itself. The
-library is designed to facilitate the creation of easily extensible and
+Kubernetes ecosystems, most prominently in \texttt{kubectl} itself. The~ library
+is designed to facilitate the creation of easily extensible and
 customizable CLI tools. Cobra programs are typically called with a list
 of structured arguments specifying an object, an action to perform on the
 selected object, and optionally a list of flags that customize the program’s
@@ -27,8 +28,12 @@ behavior.
 
 \section{Functionalities}
 The treelike command structure implies the natural order of the whole CLI
-tool. Consequently, each command in our tool has the following form: \\
-\centerline{\textit{msp resource-type action resource-name flags}}
+tool. Consequently, each command in our tool has the following form:
+
+\vspace{.75em}
+\centerline{\texttt{msp \textit{resource-type action resource-name flags}}}
+\vspace{.75em}
+
 \texttt{msp} can be used to create, update, or delete both MySQLClusters
 and MySQLBackupSchedules. Flags can be global or local, referring
 to resource types and actions. To set global options, needed for proper

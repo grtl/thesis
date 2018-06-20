@@ -5,18 +5,18 @@ development stack.
 
 \section{Version Control System}
 Our version control system of choice is \textbf{git} and we host our repository on
-\textbf{GitHub}~\footnote{https://github.com}. Being the most popular git host,
+\textbf{GitHub}\footnote{https://github.com}. Being the most popular git host,
 GitHub is well integrated  with many developer tools such as Golang’s
 \texttt{go get} and various continuous integration systems. On top of that,
 we use common GitHub features for managing current tasks and project development.
 
 \subsection{Workflow}
-We follow a fairly standard git workflow. New features are developed on 
+We follow a fairly standard git workflow. New features are developed on
 separate branches, branched directly off of \texttt{master}. Once the code
-is ready, the branch is pushed to our central GitHub repository and code 
-review is requested from other team members. After positive feedback from 
-the CI system and two approvals, the pull request is merged to the 
-\texttt{master} branch. To retain a linear git history, all feature branches 
+is ready, the branch is pushed to our central GitHub repository and code
+review is requested from other team members. After positive feedback from
+the CI system and two approvals, the pull request is merged to the
+\texttt{master} branch. To retain a linear git history, all feature branches
 are rebased onto the \texttt{master} branch before merging.
 
 \section{Continuous Integration}
@@ -24,33 +24,33 @@ are rebased onto the \texttt{master} branch before merging.
 \subsection{Automated Testing}
 \textbf{Travis CI}~\cite{travis} is a hosted continuous integration service with
 a free option for open source projects.
-Unlike many other services, it does not require server-side 
-configuration, but relies only on .travis.yml files placed inside 
-the project's source directory. This makes it easy to have different test 
-code per branch and removes the necessity to manage permissions separately 
-for the repository and for the CI system. Travis integrates well with other 
+Unlike many other services, it does not require server-side
+configuration, but relies only on .travis.yml files placed inside
+the project's source directory. This makes it easy to have different test
+code per branch and removes the necessity to manage permissions separately
+for the repository and for the CI system. Travis integrates well with other
 tools used in our project (GitHub and Slack).
 
-Along with Travis CI, we have 
-decided to use \textbf{Coveralls}~\cite{coveralls} --- a web service that 
-tracks code coverage\footnote{the percentage of the source code of a~program 
-is executed when a particular test suite runs} over time, and ensures that 
+Along with Travis CI, we have
+decided to use \textbf{Coveralls}~\cite{coveralls} --- a web service that
+tracks code coverage\footnote{the percentage of the source code of a~program
+is executed when a particular test suite runs} over time, and ensures that
 all new code is fully covered by tests.
 
 \subsection{Kubernetes Cluster}
-To perform integration tests during the continuous integration process we 
+To perform integration tests during the continuous integration process we
 used \textbf{Minikube}~\cite{minikube} --- a lightweight
-Kubernetes implementation that creates a VM on the local machine and deploys 
+Kubernetes implementation that creates a VM on the local machine and deploys
 a simple cluster containing only one node.
 
 \subsection{Continuous Deployment}
-The Docker image built from the \texttt{master} branch is automatically 
+The Docker image built from the \texttt{master} branch is automatically
 deployed to \textbf{DockerHub}~\cite{docker}. This way users can download
-and use our project easily as a docker image. Each stable version of our 
+and use our project easily as a docker image. Each stable version of the
 project is manually added and reflects a specific git commit.
 
 \section{Communication}
-As our communication tool, we have chosen \textbf{Slack}~\cite{slack} --- 
+As our communication tool, we have chosen \textbf{Slack}~\cite{slack} ---
 a modern IRC-like communicator. Slack features persistent chat rooms
-(channels) organized by topic, comes with a large number of third-party 
+(channels) organized by topic, comes with a large number of third-party
 services, and supports community-built integrations.
