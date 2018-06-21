@@ -2,7 +2,7 @@
 
 In this chapter the main part of the project is described. First we provide
 a high-level overview, followed by the detailed design of the MySQL Operator
-and Backup custom resources. The chapter concludes with some basic usage examples.
+and Backup custom resources. The~chapter concludes with some basic usage examples.
 
 \section{High-level overview}
 The MySQL Operator allows a user to easily deploy replicated MySQL databases on a Kubernetes cluster.
@@ -22,7 +22,7 @@ The MySQL Operator allows the user to create, delete, update, backup, and restor
 
 When \textit{creating} a cluster, the operator deploys a new instance of a replicated MySQL
 database cluster alongside with all additional Kubernetes objects necessary for a proper deployment.
-Additionally, rather than initializing a fresh cluster, data may be \textit{restored} from a backup file.
+Additionally, rather than initializing a fresh cluster, data may be \textit{restored} from a~backup file.
 
 When a cluster is to be removed, the operator takes care to delete the cluster and its
 configuration from Kubernetes. Unless explicitly specified, database data remains available, to be
@@ -33,7 +33,7 @@ password) or scaling the cluster (increasing or decreasing the number of replica
 cluster). When such an update is requested, the operator makes sure all the relevant Kubernetes
 objects are updated to reflect the new cluster configuration.
 
-We provided users with the ability to schedule backups. \textit{Scheduling a backup} initiates a
+We provided users with the ability to schedule backups. \textit{Scheduling a backup} initiates a~
 recurring backup. The backup job's behavior is similar to a cron job's --- backups are created
 periodically at regular intervals.
 
