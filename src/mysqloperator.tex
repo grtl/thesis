@@ -260,8 +260,6 @@ names of all the clusters we want to remove from Kubernetes.
 
 \begin{lstlisting}
 > kubectl delete mysqlcluster my-cluster
-OR
-> kubectl delete mc my-cluster
 \end{lstlisting}
 
 \paragraph{Data to specify}
@@ -346,8 +344,6 @@ Deletion of a backup schedule works in the same way as the cluster deletion.
 
 \begin{lstlisting}
 > kubectl delete mysqlbackupschedule my-backup
-OR
-> kubectl delete mbs my-backup
 \end{lstlisting}
 
 \paragraph{Data to specify}
@@ -369,3 +365,10 @@ scheduling time.
 \begin{enumerate}
     \item Time \textit{(cron style)}.
 \end{enumerate}
+
+\paragraph{}
+The above use cases show how to use fundamental Kubernetes API calls to interact
+with the provided MySQL-related custom resources. Despite the fact that this
+method is highly flexible, it requires detailed knowledge about the structure of
+raw yaml files describing Kubernetes objects. In the next chapter we describe
+a tool that provides a layer of abstraction above \texttt{kubectl} calls.
