@@ -13,11 +13,11 @@ StatefulSet to run servers, and a Service to expose them at one DNS endpoint. De
 for backups required a bit more thought.
 
 \section{Cyclic Backups}
-The Kubernetes’ design philosophy proclaims that users should describe the desired state and
+The Kubernetes' design philosophy proclaims that users should describe the desired state and
 Kubernetes will try to adjust to this request. As mentioned in the Background chapter, Kubernetes
 objects are by convention meant to represent nouns, not verbs. Following this ideology, we
 decided to provide cyclic backup creation. What is more, creating backups on a cyclic schedule
-is a good system administration practice. However, for the user’s convenience, one-shot backups are
+is a good system administration practice. However, for the user's convenience, one-shot backups are
 also supported.
 
 \section{Backup Schedules and Instances}
@@ -28,7 +28,7 @@ verb ("create a backup"), but a noun ("an agent that creates backups periodicall
 time, another resource --- MySQLBackupInstance is created to represent individual backup instances.
 
 \section{LAMP Stack}
-Our project’s purpose was to provide a convenient way to set up a LAMP
+Our project's purpose was to provide a convenient way to set up a LAMP
 stack on Kubernetes. We quickly realized that the only part of this stack that needed special
 consideration was the database layer. An Apache server serving a simple PHP web application can
 easily be deployed using a Kubernetes Deployment and a publicly available Apache Docker image.

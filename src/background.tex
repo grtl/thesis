@@ -2,7 +2,7 @@
 
 In this chapter, we provide a basic understanding of the fundamentals necessary to understand
 further parts of this dissertation. First, basic Kubernetes concepts and its philosophy are
-explained. Next, we describe Kubernetes’ structure, including the container orchestration process.
+explained. Next, we describe Kubernetes' structure, including the container orchestration process.
 Finally, we provide information about an important concept used in the project --- custom resources.
 
 \section{Kubernetes Basics}
@@ -15,7 +15,7 @@ MySQL database cluster, we need to use structures designed specifically for such
 the latest versions of Kubernetes, we are provided with some useful stateful objects, such as
 PersistentVolumes or StatefulSets.
 
-It is useful to make a note about Kubernetes’ design philosophy.
+It is useful to make a note about Kubernetes' design philosophy.
 Kubernetes objects are meant to be just that --- objects. They are to represent nouns rather than
 verbs. As such, we usually do not create objects that are responsible for a single action. Instead,
 for example, one may create an object that represents an agent that performs the desired action
@@ -40,7 +40,7 @@ working node. This ensures continuous work of cluster applications.
     \label{fig:arch}
 \end{figure}
 
-To get a better understanding of Kubernetes' structure, let’s take a look at the data presented
+To get a better understanding of Kubernetes' structure, let's take a look at the data presented
 in Figure \ref{fig:arch}. Each worker node is equipped with a program called \textbf{kubelet},
 responsible for managing Pods on that particular node, and for communication with the master. The
 kube-apiserver runs on every node in order to provide TCP and UDP forwarding across the backend.
@@ -49,11 +49,11 @@ The master node is responsible for processing events in the cluster and making g
 such as scheduling and scaling. It consists of several components that allow for communication
 between other nodes and cluster users, such as the kube-apiserver, etcd, and kube-controller-manager.
 One of the most important features of the master node is a server running on it, exposing a RESTful
-API. The API may be queried by users and applications to get information about the cluster’s current
+API. The API may be queried by users and applications to get information about the cluster's current
 state, and requests can be made to request the addition, deletion, or modification of various API
 objects. As requests are made, a desired state is defined. It is the job of a group of controllers
 within kube-controller-manager to make the actual state match this desired state. The master node
-uses etcd to store information about the cluster’s state. Requests to the Kubernetes apiserver
+uses etcd to store information about the cluster's state. Requests to the Kubernetes apiserver
 result in queries and modifications of the data stored in etcd.
 
 \section{Expanding the Kubernetes API}
@@ -79,5 +79,5 @@ than the aggregation layer, but requires less overhead for simple applications.
 The MySQL Operator is implemented using CustomResourceDefinitions because of the simplicity and
 modern design of this option. This way of extending Kubernetes API is a new concept (beta version in
 Kubernetes 1.9), but it will likely be supported and extended in future versions. Though
-CustomResourceDefinitions’ functionalities are limited compared to the aggregation layer’s, they
-are suitable for our project’s needs.
+CustomResourceDefinitions' functionalities are limited compared to the aggregation layer's, they
+are suitable for our project's needs.

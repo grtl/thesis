@@ -34,7 +34,7 @@ cluster). When such an update is requested, the operator makes sure all the rele
 objects are updated to reflect the new cluster configuration.
 
 We provided users with the ability to schedule backups. \textit{Scheduling a backup} initiates a
-recurring backup. The backup job’s behavior is similar to a cron job’s --- backups are created
+recurring backup. The backup job's behavior is similar to a cron job's --- backups are created
 periodically at regular intervals.
 
 \section{Project Design}
@@ -55,9 +55,9 @@ by a MySQLBackupSchedule when a backup process is about to start and their delet
 removes the backup contents from storage.
 
 \subsection{Design Patterns}
-The MySQL Operator’s implementation is primarily based on two common Kubernetes design patterns:
+The MySQL Operator's implementation is primarily based on two common Kubernetes design patterns:
 the controller and operator patterns. A \textbf{controller} is an informer whose responsibility is
-to monitor changes in an application’s state. On each change, a predefined controller function is
+to monitor changes in an application's state. On each change, a predefined controller function is
 executed. An \textbf{operator} builds on ideas from the controller pattern and basic Kubernetes
 concepts. It is responsible for creating, configuring, and managing stateful applications running on
 clusters. Operators essentially extend the Kubernetes API.
@@ -69,10 +69,10 @@ clusters. Operators essentially extend the Kubernetes API.
     \label{fig:design}
 \end{figure}
 
-To get a better understanding of the controller and operator design patterns, let’s look at an
-example of how an operator will respond to a user’s action. Let’s say the user wants to modify a
-MySQLCluster instance. From the user’s point of view, this can be done by issuing a
-\texttt{kubectl patch} command. From the operator’s point of view, an \textbf{Update} event is
+To get a better understanding of the controller and operator design patterns, let's look at an
+example of how an operator will respond to a user's action. Let's say the user wants to modify a
+MySQLCluster instance. From the user's point of view, this can be done by issuing a
+\texttt{kubectl patch} command. From the operator's point of view, an \textbf{Update} event is
 received and the corresponding operator handler is called by the controller.
 
 We use the controller and operator patterns to manage resources related to both
@@ -87,7 +87,7 @@ The controller ensures that an actual backup file is properly created and delete
 The controllers (Figure \ref{fig:design}~C), though technically
 goroutines\footnote{Lightweight threads managed by the Go runtime.} in a single
 MySQL Operator process, can be thought of as separate processes responsible for separate parts of the
-cluster’s architecture. Thanks to these constructs we can monitor custom resource instances and adjust
+cluster's architecture. Thanks to these constructs we can monitor custom resource instances and adjust
 all the related objects as necessary. The operator pattern was designed for stateful applications, making
 it suitable for both database cluster and backup management~\cite{coreos}.
 
@@ -97,7 +97,7 @@ it suitable for both database cluster and backup management~\cite{coreos}.
 The internal implementation of a MySQLCluster within Kubernetes consists of two parts. First,
 several Pods (one for each replica) running a containerized MySQL server are managed by a
 StatefulSet. Secondly, two Kubernetes Services expose the MySQL servers as named endpoints by
-configuring Kubernetes’ DNS. Two distinct Services are necessary because different nodes in the
+configuring Kubernetes' DNS. Two distinct Services are necessary because different nodes in the
 cluster have different capabilities. Specifically, the master node is the only one to which writing
 is allowed. Therefore, one Service exposes only the  master node and allows for both reading and
 writing, while the second Service connects to all nodes, but allows for read-only access.
@@ -107,10 +107,10 @@ creates a MySQLCluster object.
 
 \subsubsection*{Services}
 A Service object represents the network configuration necessary to expose a specific service at a
-particular domain name and port. To expose the MySQLCluster we create what’s called a
+particular domain name and port. To expose the MySQLCluster we create what's called a
 “headless Service.” No specific IP address is configured. Instead, we specify which Pods (the ones
 managed by our StatefulSet) should be available under the given address. The Service then configures
-Kubernetes’ DNS to return an \textbf{A record}\footnote{An \textbf{A record} maps a domain name to
+Kubernetes' DNS to return an \textbf{A record}\footnote{An \textbf{A record} maps a domain name to
 the IP address (IPv4) of the computer hosting the domain.} pointing at each of the Pods. This
 essentially means that DNS load balancing is used to load balance queries to the database cluster.
 
@@ -120,17 +120,17 @@ as well. Thanks to the \texttt{ownerReferences} attribute, we do not have to wor
 deletion of dependent structures. Kubernetes understands that some objects are owned by others, and
 when a parent object is deleted, the children will be deleted as well. Thus all we have to do is to set
 the \texttt{ownerReferences} field of the Services and StatefulSet we create to the parent
-MySQLCluster object’s UID and Kubernetes will take care of garbage collection for us.
+MySQLCluster object's UID and Kubernetes will take care of garbage collection for us.
 
 Objects which are meant to have a longer lifetime, such as PersistentVolumeClaims and the
 PersistentVolumes on which database data is stored, will not be deleted. In order to
 proceed with a hard delete, these constructs have to be removed separately.
 
 \subsubsection*{Scale/Update}
-The operator’s update handler receives information about how the cluster’s configuration looked
+The operator's update handler receives information about how the cluster's configuration looked
 like before the update, and what the new requested configuration is. Based on this, we can create
-new configurations for the cluster’s related objects (the Services and StatefulSet) and issue update
-requests for those. In case of an error, we update the MySQLCluster’s status field with an error
+new configurations for the cluster's related objects (the Services and StatefulSet) and issue update
+requests for those. In case of an error, we update the MySQLCluster's status field with an error
 message. The cluster might be partially updated and its previous state is not reinstated.
 
 \begin{figure}[!ht]
@@ -142,7 +142,7 @@ message. The cluster might be partially updated and its previous state is not re
 
 Core Kubernetes structures, such as StatefulSets or Services, are already equipped with mechanisms
 for scaling and configuration updates that do most of the work for us (for example, starting up new
-Pods if the replica count is increased). However, when scaling up, we need to copy the cluster’s
+Pods if the replica count is increased). However, when scaling up, we need to copy the cluster's
 data to the newly created replicas.
 
 To achieve non-blocking replication, every pod has an XtraBackup
@@ -173,7 +173,7 @@ of the latter type reflect the actual backups created. As a result, each
 of the MySQLBackupSchedules can have multiple corresponding
 MySQLBackupInstances --- one for each backup created.
 
-To gain a better understanding of this structure, let’s analyse Figure
+To gain a better understanding of this structure, let's analyse Figure
 \ref{fig:backups}. From the user's point of view, cyclic backups are requested
 by creating a MySQLBackupSchedule object (A). Backup creation is handled
 by a Kubernetes CronJob object created by our operator. A CronJob periodically
@@ -194,7 +194,7 @@ deleted since PersistentVolumes are not owned by our object.
 To actually create backups we reuse the solution applied for scaling
 up MySQL clusters. The backup mechanism utilizes the same XtraBackup endpoints
 to get the data from our database. Backups are always based on the master
-node’s data.
+node's data.
 
 \subsubsection*{Restore}
 Users can restore any backup instance from a chosen backup schedule. This is simply done by creating

@@ -9,7 +9,7 @@ common use cases.
 \section{CLI Basics}
 \texttt{msp} provides a layer of abstraction over management of MySQLCluster
 and MySQLBackupSchedule objects. Rather than writing verbose yaml files and manually
-modifying Kubernetes’ configuration via \texttt{kubectl}, a user can easily
+modifying Kubernetes' configuration via \texttt{kubectl}, a user can easily
 perform most actions related to managing their MySQL cluster with a single
 \texttt{msp} command. Additionally, a CLI tool like this helps inexperienced users
 get started with our system, and allows Kubernetes system administrators to
@@ -23,7 +23,7 @@ Kubernetes ecosystems, most prominently in \texttt{kubectl} itself. The~ library
 is designed to facilitate the creation of easily extensible and
 customizable CLI tools. Cobra programs are typically called with a list
 of structured arguments specifying an object, an action to perform on the
-selected object, and optionally a list of flags that customize the program’s
+selected object, and optionally a list of flags that customize the program's
 behavior.
 
 \section{Functionalities}
@@ -91,7 +91,7 @@ delete, removing not only the cluster but also all database information.
 > msp delete cluster "my-cluster" "my-cluster2"
 \end{lstlisting}
 
-\noindent Deleting a cluster along with PVC’s.
+\noindent Deleting a cluster along with PVC's.
 
 \begin{lstlisting}
 > msp delete cluster "my-cluster" --remove-pvc
