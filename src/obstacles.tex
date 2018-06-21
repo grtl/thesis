@@ -32,12 +32,12 @@ Dependency management has for a long time been a big problem in Go. The main dec
 was the choice of a tool for managing dependencies in our project. Our first choice was a tool called
 dep~\cite{dep} as recommended by most Kubernetes articles and because it seemed to be the most up-to-date one,
 being the official experimental dependency manager. Unfortunately, at the beginning of the project,
-dep was not yet production ready, and it didn’t meet our requirements. We encountered trouble adding
-some dependencies and were trapped in dependency cycles that dep couldn’t handle gracefully. The
+dep was not yet production ready, and it did not meet our requirements. We encountered trouble adding
+some dependencies and were trapped in dependency cycles that dep could not handle gracefully. The
 second manager we tried was godep~\cite{godep}. This tool is the predecessor of dep and was available in a more
 stable version. Despite its lack of support for constraints on vendor versions, it fulfilled its
 role for a few months. Trying to keep up with the latest changes in the Kubernetes we were trapped
-in a cycle of manually updating the dependencies and adding them to the vendor directory as godep didn’t
+in a cycle of manually updating the dependencies and adding them to the vendor directory as godep did not
 support the dependencies not directly referenced in code. Another issue with godep was resolving the
 subdependencies required by more than one dependency. As the stable version of dep had already been
 released at that point, we decided to change back and regain the full flexibility of vendor
@@ -52,7 +52,7 @@ practice in the Go ecosystem.
 Due to our familiarity with Jenkins it was our first choice when setting up continuous integration.
 As the project was meant to be open-source we decided to use Blue Ocean~\cite{blueocean} with pipelines plugin to
 allow contributors to tweak the build process. The Jenkins setup allowed for unit testing and
-linter checks. However, the outdated kernel on the server we had access to wasn’t capable of handling
+linter checks. However, the outdated kernel on the server we had access to was not capable of handling
 Docker and any form of Kubernetes cluster --- essential for integration tests. Along with the
 necessity to maintain the Jenkins server ourselves at the expense of the time we could have spent
 on the project we decided to move the continuous integration to a hosted service.
